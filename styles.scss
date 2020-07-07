@@ -1,0 +1,15 @@
+$company-color: rgb(255, 0, 0);
+
+
+h1 {
+  color: $company-color;
+}
+
+ul {
+  list-style-type: none;
+
+}
+
+ul li {
+  color: $company-color;
+}
