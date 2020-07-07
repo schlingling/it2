@@ -1,4 +1,5 @@
 var rawData = []
+var countTaster = {}
 
 window.onload = initialisiere();
 
@@ -12,21 +13,33 @@ Promise.all(rawData).then((result) => preprocess_rawData(result), function (erro
 
 
 
-function preprocess_rawData (rawData, error){
+function preprocess_rawData(rawData, error) {
     if (error) {
         console.log(error);
     } else {
-       console.log(rawData);
+        console.log(rawData);
 
-       rawData[0].forEach(zeitpunkt => {
-           for (const [key, val] of Object.entries(zeitpunkt.werte)){
-               console.log(key,val);
-           }
-       });
+        i = 0;
+        rawData[0].forEach(zeitpunkt => {
+            for (const [key, val] of Object.entries(zeitpunkt.werte)) {
+                if (!countTaster[key]) {
+                    if (val == " true") {
+                        countTaster[key] = 1
+                    } else {
+                        countTaster[key] = 0
+                    }
+                } else {
+                    if ((rawData[0][i - 1].werte[key]) != val) {
+                        countTaster[key] += 1
+                    }
+                }
+            }
+            i++;
+        });
 
-    
+
     }
-
+    console.log(countTaster)
 }
 
 
