@@ -1,0 +1,28 @@
+Hallo ihr beiden,
+
+ich bin euch ja noch die Aufstellung der Wegstrecken schuldig.
+Anbei ein Foto von den gemessenen Werten.
+Das Josephs hat mittlerweile auch wieder geöffnet, d.h. ihr könntet auch zu den Öffnungszeiten vorbei gehen und auch selber nachmessen.
+Hier noch eine kurze Erklärung zu dem Foto:
+
+HSC3 = H-horizontal
+HSC1 = H-vertikal
+Arm raus = Referenztaster Ausleger vorne bzw. hinten gedrückt (hier jeweils einmal pro true/false Wechsel zählen, ihr könnt davon ausgehen, dass immer der komplette Weg gefahren wird)
+
+HSC4  = V-vertikal
+HSC5 = V-drehen
+HSC6 = V-horizontal
+
+Ofen->Bearbeitung = B-Motor Sauger zum Ofen bzw. B-Motor Sauger zum Drehkranz (hier jeweils einmal pro true/false Wechsel zählen, ihr könnt davon ausgehen, dass immer der komplette Weg gefahren wird)
+Ofen raus/rein = B-Motor Ofenschieber Einfahren bzw. Ausfahren  (hier jeweils einmal pro true/false Wechsel zählen, ihr könnt davon ausgehen, dass immer der komplette Weg gefahren wird)
+
+
+Drehkranz = B-Motor Drehkranz im Uhrzeigersinn bzw. B-Motor Drehkranz gegen Uhrzeigersinn (hier jeweils einmal pro true/false Wechsel zählen, ihr könnt davon ausgehen, dass immer der komplette Weg gefahren wird)
+
+
+B-Motor Foerderband vorwaerts = hier bitte die Sekunden zählen
+S-Motor Foerderband = hier bitte die Sekunden zählen
+
+Viele Grüße
+
+Max
