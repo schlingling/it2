@@ -4,11 +4,13 @@ var countTaster = {}
 window.onload = initialisiere();
 
 function initialisiere() {
-    rawData.push(d3.json("http://it2wi1.if-lab.de/rest/ft_ablauf"))
+    rawData.push(d3.json("http://it2wi1.if-lab.de/rest/ft_ablauf"));
+    makeList();
 }
 
 Promise.all(rawData).then((result) => preprocess_rawData(result), function (error) {
     console.log(error);
+
 });
 
 
@@ -42,7 +44,16 @@ function preprocess_rawData(rawData, error) {
     console.log(countTaster)
 }
 
-
+function makeList() {
+    listelements = [];
+    for (const [key, val] of Object.entries(countTaster)) {
+        listelements.push(<li>{key}: {val}</li>)
+    }
+    Document.getElementbyID("content1").append.text(function () {
+        return ("<ul>"+{listelements}+"</ul>")
+    }
+    )
+}
 
 
 
