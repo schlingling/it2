@@ -1,0 +1,13 @@
+h1 {
+  color: red;
+}
+
+ul {
+  list-style-type: none;
+}
+
+ul li {
+  color: red;
+  color: black;
+}
+/*# sourceMappingURL=styles.css.map */
