@@ -81,14 +81,12 @@ function preprocess_rawData(rawData, error) {
     aktualisiereListe(mapBearbeitungsstationFi, "bearbeitungsstation");
     aktualisiereListe(mapSortierstationFi, "sortierstation");
 
-
     aktualisiereListeComulate(mapComulate, "verteilstation_schwenkarm"); //ACHTUNG: Für Kummulierte Wegstrecke extra aktualisiere()!
 
     zeigeDiagram(mapHochregalFi, "hochregallagerG");
     zeigeDiagram(mapVerteilstationFi, "verteilstationG");
     zeigeDiagram(mapBearbeitungsstationFi, "bearbeitungsstationG");
     zeigeDiagram(mapSortierstationFi, "sortierstationG");
-
 
 }
 
