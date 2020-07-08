@@ -29,7 +29,7 @@ function preprocess_rawData(rawData, error) {
                         countTaster[key] = 0
 
                     } else {
-                        countTaster[key] = 1
+                        countTaster[key] = 1 //need to be set to one, da mit 0 sonst nicht initialisiert 
                     }
                 } else {
                     //console.log(key)
