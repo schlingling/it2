@@ -1,5 +1,17 @@
+body{
+  background-color: rgb(88, 88, 88);
+}
+
 h1 {
-  color: red;
+  color: rgb(253, 194, 32);
+}
+
+h2{
+  color: white;
+}
+
+h3{
+  color: rgb(155, 155, 155);
 }
 
 ul {
@@ -7,7 +19,6 @@ ul {
 }
 
 ul li {
-  color: red;
-  color: black;
+
 }
 /*# sourceMappingURL=styles.css.map */
