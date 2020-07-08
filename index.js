@@ -16,7 +16,6 @@ function preprocess_rawData(rawData, error) {
     if (error) {
         console.log(error);
     } else {
-        //console.log(rawData);
         i = 0;
         rawData[0].forEach(zeitpunkt => {
             for (const [key, val] of Object.entries(zeitpunkt.werte)) {
@@ -26,12 +25,11 @@ function preprocess_rawData(rawData, error) {
                         countTaster[key] = 1
                     } else if (val == " false"){
                         countTaster[key] = 0
-                    } else{
-                        countTaster[key] = 0
                     }
                 } else {
-
-                    if ((rawData[0][i - 1].werte[key]) != val) {
+                    if(valueToComulate(key)){
+                        //countTaster
+                    } else if ((rawData[0][i - 1].werte[key]) != val) {
                         countTaster[key] += 1
                     }
                 }
@@ -104,4 +102,13 @@ function aktualisiereListe(listeModul, targetID) {
     //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
     d.exit().remove();
     //console.log(countTaster[0])
+}
+
+function valueToComulate(key){
+    if(key == "H-vertikal" || key == "H-horizontal" || key == "V-vertikal" || key == "V-drehen" || key == "V-horizontal"){
+        return true;
+    } else {
+        return false;
+    }
+
 }
