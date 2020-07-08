@@ -121,10 +121,15 @@ function aktualisiereListe(listeModul, targetID) {
 }
 
 function valueToComulate(key){
-    if(key == "H-vertikal" || key == "H-horizontal" || key == "V-vertikal" || key == "V-drehen" || key == "V-horizontal"){
+    
+    if(key === "H-vertikal" || key === "H-horizontal" || key === "V-vertikal" || key === "V-drehen" || key === "V-horizontal"){
+        console.log(key) 
         return true;
+        
     } else {
+           
         return false;
+        
     }
 
 }
