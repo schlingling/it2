@@ -12,6 +12,8 @@ function initialisiere() {
 
 function preprocess_rawData(rawData, error) {
 
+   let valueToComulate = ["H-vertikal", "H-horizontal","V-vertikal","V-drehen", "V-horizontal"];
+
     let countTaster = {};
     if (error) {
         console.log(error);
@@ -26,12 +28,21 @@ function preprocess_rawData(rawData, error) {
                     } else if (val == " false") {
                         countTaster[key] = 0
 
-                    } 
+                    } else {
+                        countTaster[key] = 1
+                    }
                 } else {
-                    if(valueToComulate(key)){
+                    //console.log(key)
+                    //console.log(valueToComulate.includes(key))
+
+                    if (valueToComulate.includes(key) && (rawData[0][i - 1].werte[key] != val)) {
                         //countTaster
+                       // console.log(val)
+                        countTaster[key] += parseInt(val,10)
+
                     } else if ((rawData[0][i - 1].werte[key]) != val) {
                         countTaster[key] += 1
+
                     }
                 }
             }
@@ -40,14 +51,15 @@ function preprocess_rawData(rawData, error) {
 
 
     }
-    //console.log(countTaster),
+   // console.log(countTaster),
     liste = [];
 
     //Listen von Modul Fischertechnik
-    listeHochregalFi = ["H-vertikal", "H-horizontal", "Referenztaster horizontal", "Referenztaster vertikal", "Referenztaster Ausleger vorne", "Referenztaster Ausleger hinten", "Lichtschranke innen", "Lichtschranke aussen"];
-    listeVerteilstationFi = ["V-vertikal", "V-drehen", "V-horizontal", "V-Referenzschalter vertikal", "V-Referenzschalter horizontal", "V-Referenzschalter drehen"]
+    listeHochregalFi = ["Referenztaster horizontal", "Referenztaster vertikal", "Referenztaster Ausleger vorne", "Referenztaster Ausleger hinten", "Lichtschranke innen", "Lichtschranke aussen"];
+    listeVerteilstationFi = ["V-Referenzschalter vertikal", "V-Referenzschalter horizontal", "V-Referenzschalter drehen"]
     listeBearbeitungsstationFi = ["B-Motor Drehkranz im Uhrzeigersinn", "B-Motor Drehkranz gegen Uhrzeigersinn", "B-Motor Foerderband vorwaerts", "B-Motor Saege", "B-Motor Ofenschieber Einfahren", "B-Motor Ofenschieber Ausfahren", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Leuchte Ofen", "B-Referenzschalter Drehkranz (Pos. Sauger)", "B-Referenzschalter Drehkranz (Pos. Foerderband)", "B-Lichtschranke Ende Foerderband", "B-Referenzschalter Drehkranz (Pos. Saege)", "B-Referenzschalter Sauger (Pos. Drehkranz)", "B-Referenzschalter Ofenschieber Innen", "B-Referenzschalter Ofenschieber Aussen", "B-Referenzschalter Sauger (Pos. Brennofen)", "B-Lichtschranke Brennofen"]
     listeSortierstationFi = ["S-Lichtschranke Eingang", "S-Lichtschranke nach Farbsensor", "S-Lichtschranke weiss", "S-Lichtschranke rot", "S-Lichtschranke blau", "S-Motor Foerderband"]
+    listeComulate = ["H-vertikal", "H-horizontal","V-vertikal","V-drehen", "V-horizontal"];
 
     //Listen von Modul Festo
     listeFesto = ["Umsetzer Endanschlag 1 (3B1)", "Umsetzer Endanschlag 2 (3B2)"]
@@ -60,6 +72,7 @@ function preprocess_rawData(rawData, error) {
     let mapVerteilstationFi = mapModule(listeVerteilstationFi, liste);
     let mapBearbeitungsstationFi = mapModule(listeBearbeitungsstationFi, liste);
     let mapSortierstationFi = mapModule(listeSortierstationFi, liste);
+    let mapComulate = mapModuleComulate(listeComulate,liste); //ACHTUNG: Für Kummulierte Wegstrecke extra Mapmethode!
 
     let mapFesto = mapModule(listeFesto, liste);
 
@@ -68,9 +81,10 @@ function preprocess_rawData(rawData, error) {
     aktualisiereListe(mapBearbeitungsstationFi, "bearbeitungsstation");
     aktualisiereListe(mapSortierstationFi, "sortierstation");
 
-    aktualisiereListe(mapHochregalFi, "hochregallager");
+    
+    aktualisiereListeComulate(mapComulate, "verteilstation_schwenkarm"); //ACHTUNG: Für Kummulierte Wegstrecke extra aktualisiere()!
 
-    zeigeDiagram(mapHochregalFi);
+    //zeigeDiagram(mapHochregalFi);
 
 }
 
@@ -101,6 +115,21 @@ function mapModule(listeModul, listeGlobal) {
     return filteredListe;
 }
 
+function mapModuleComulate(listeModul,listeGlobal){
+    let filteredListe = listeGlobal.map(function (d, i) {
+        if (listeModul.includes(d.key)) {
+            //console.log(d)
+            //console.log(d.val)
+            d.val = Math.round(d.val/79)
+            return (d);
+        }
+    }).filter(function (x) {
+        return x !== undefined;
+    });
+    return filteredListe;
+
+}
+
 function aktualisiereListe(listeModul, targetID) {
 
     id = "#" + targetID;
@@ -120,16 +149,22 @@ function aktualisiereListe(listeModul, targetID) {
     //console.log(countTaster[0])
 }
 
-function valueToComulate(key){
-    
-    if(key === "H-vertikal" || key === "H-horizontal" || key === "V-vertikal" || key === "V-drehen" || key === "V-horizontal"){
-        console.log(key) 
-        return true;
-        
-    } else {
-           
-        return false;
-        
-    }
 
+function aktualisiereListeComulate(listeModul, targetID) {
+
+    id = "#" + targetID;
+
+    //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
+    let d = d3.select(id).selectAll("li").data(listeModul);
+    //console.log(d)
+    //console.log(countTaster)
+    //.enter().append(): Daten hinzufuegen falls es mehr Daten als Elemente im HTML gibt.
+    //geschieht hier für jede Zeile von daten.
+    d.enter().append("li")
+        .text(function (listeModul) {
+            return listeModul.key + ": " + listeModul.val + " cm";
+        });
+    //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
+    d.exit().remove();
+    //console.log(countTaster[0])
 }
