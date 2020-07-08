@@ -1,17 +1,21 @@
 $company-color: rgb(255, 0, 0);
 
+body {
+    background-color: rgb(88, 88, 88);
+}
 
 h1 {
-  color: $company-color;
+    color: rgb(253, 194, 32);
+}
+
+h2 {
+    color: white;
+}
+
+h3 {
+    color: rgb(155, 155, 155);
 }
 
 ul {
-  list-style-type: circel;
-
-}
-
-
-ul li {
-  color: $company-color;
-  color: black;
+    list-style-type: circel;
 }

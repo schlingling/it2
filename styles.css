@@ -1,24 +1,20 @@
-body{
-  background-color: rgb(88, 88, 88);
+body {
+  background-color: #585858;
 }
 
 h1 {
-  color: rgb(253, 194, 32);
+  color: #fdc220;
 }
 
-h2{
+h2 {
   color: white;
 }
 
-h3{
-  color: rgb(155, 155, 155);
+h3 {
+  color: #9b9b9b;
 }
 
 ul {
   list-style-type: circel;
-}
-
-ul li {
-
 }
 /*# sourceMappingURL=styles.css.map */
