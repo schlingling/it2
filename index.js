@@ -1,26 +1,23 @@
-var rawData = []
-var countTaster = {}
 
-window.onload = initialisiere();
 
 function initialisiere() {
+    let rawData = []
     rawData.push(d3.json("http://it2wi1.if-lab.de/rest/ft_ablauf"));
-    makeList();
+    Promise.all(rawData).then((result) => preprocess_rawData(result), function (error) {
+        console.log(error);
+    });
+
 }
-
-Promise.all(rawData).then((result) => preprocess_rawData(result), function (error) {
-    console.log(error);
-
-});
 
 
 
 function preprocess_rawData(rawData, error) {
+
+    let countTaster = {};
     if (error) {
         console.log(error);
     } else {
-        console.log(rawData);
-
+        //console.log(rawData);
         i = 0;
         rawData[0].forEach(zeitpunkt => {
             for (const [key, val] of Object.entries(zeitpunkt.werte)) {
@@ -41,25 +38,44 @@ function preprocess_rawData(rawData, error) {
 
 
     }
-    console.log(countTaster)
-}
+    //console.log(countTaster),
+    liste = [];
+    
 
-function makeList() {
-    listelements = [];
+
     for (const [key, val] of Object.entries(countTaster)) {
-        listelements.push(<li>{key}: {val}</li>)
+        liste.push({key,val})
     }
-    Document.getElementbyID("content1").append.text(function () {
-        return ("<ul>"+{listelements}+"</ul>")
-    }
-    )
+
+
+
+
+
+    aktualisiereListe(liste);
+}
+
+function aktualisiereListe(liste) {
+    
+    //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
+    let d = d3.select("#content1").selectAll("li").data(liste);
+    //console.log(d)
+    //console.log(countTaster)
+    //.enter().append(): Daten hinzufuegen falls es mehr Daten als Elemente im HTML gibt.
+    //geschieht hier für jede Zeile von daten.
+    d.enter().append("li")
+        .text(function (liste) { 
+            return liste.key +": " +liste.val ; 
+        });
+    //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
+    d.exit().remove();
+    //console.log(countTaster[0])
+}
+/*
+
+
 }
 
 
-
-
-
-/*
 
 
 function aktualisiere() {
