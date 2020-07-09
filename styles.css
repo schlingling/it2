@@ -11,7 +11,7 @@ h2 {
 }
 
 h3 {
-  color: #9b9b9b;
+  color: #bdbdbd;
 }
 
 ul {
@@ -20,8 +20,8 @@ ul {
 }
 
 .trafficlight {
-  width: 45px;
-  height: 170px;
+  width: 170px;
+  height: 45px;
   background-color: white;
   border-radius: 40px;
   margin: 10px;
@@ -34,10 +34,10 @@ ul {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  -webkit-box-orient: vertical;
+  -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+      -ms-flex-direction: row;
+          flex-direction: row;
   padding-left: 15px;
   padding-right: 15px;
   padding-bottom: 10px;
