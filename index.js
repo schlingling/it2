@@ -1,6 +1,6 @@
 function initialisiere() {
     let rawData = []
-    rawData.push(d3.json("http://it2wi1.if-lab.de/rest/ft_ablauf"));
+    rawData.push(d3.json("https://it2wi1.if-lab.de/rest/ft_ablauf"));
     Promise.all(rawData).then((data) => preprocess_rawData(data), function (error) {
         console.log(error);
     });
@@ -8,8 +8,8 @@ function initialisiere() {
 
 function preprocess_rawData(rawData, error) {
     let valueToComulate = ["H-vertikal", "H-horizontal", "V-vertikal", "V-drehen", "V-horizontal"];
-    let valueForAmpel =  ["Ampel rot", "Ampel orange", "Ampel gruen", "Ampel weiss"]
-    
+    let valueForAmpel = ["Ampel rot", "Ampel orange", "Ampel gruen", "Ampel weiss"]
+
     let countTaster = {};
     if (error) {
         console.log(error);
@@ -17,27 +17,27 @@ function preprocess_rawData(rawData, error) {
         i = 0;
         rawData[0].forEach(zeitpunkt => {
             for (const [key, val] of Object.entries(zeitpunkt.werte)) {
-               
+
                 if (!countTaster.hasOwnProperty(key)) {
                     if (val == " true") {
                         countTaster[key] = 1
-                        
+
                     } else if (val == " false") {
                         countTaster[key] = 0
-                       
+
                     } else if (valueToComulate.includes(key)) {
                         countTaster[key] = 1 //need to be set to one, da mit 0 sonst nicht initialisiert 
-                        
-                    } 
-                    
+
+                    }
+
                 } else {
                     //console.log(key)
                     //console.log(valueToComulate.includes(key))
-                    if (valueForAmpel.includes(key) ){
-                        if(val == " true"){
+                    if (valueForAmpel.includes(key)) {
+                        if (val == " true") {
                             countTaster[key] += 1;
                         }
-                      
+
                     } else if (valueToComulate.includes(key) && (rawData[0][i - 1].werte[key] != val)) {
                         //countTaster
                         // console.log(val)
@@ -57,7 +57,7 @@ function preprocess_rawData(rawData, error) {
 
     //Liste Ampel
     listeAmpelrot = ["Ampel rot"]
-    listeAmpelorange = [ "Ampel orange"]
+    listeAmpelorange = ["Ampel orange"]
     listeAmpelgruen = ["Ampel gruen"]
     listeAmpelweiss = ["Ampel weiss"]
 
@@ -113,12 +113,12 @@ function preprocess_rawData(rawData, error) {
 
 function zeigeDiagram(liste, targetid) {
 
-    id = "#"+targetid;
+    id = "#" + targetid;
 
     //console.log(liste)
     // set the dimensions and margins of the graph
     var margin = { top: 20, right: 20, bottom: 30, left: 40 },
-        width = 600 - margin.left - margin.right,
+        width = 400 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom;
 
     // set the ranges
@@ -127,9 +127,11 @@ function zeigeDiagram(liste, targetid) {
         .padding(0.1);
     var y = d3.scaleLinear()
         .range([height, 0]);
+    var xachsenwerte = d3.scaleBand().range ([0, width]).padding(0.4)
+
 
     let svg = d3.select(id).append("svg")//Auf Webseite
-        .attr("width", width + margin.left + margin.right + "vw")
+        .attr("width", width + margin.left + margin.right) //+vw
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform",
@@ -145,14 +147,32 @@ function zeigeDiagram(liste, targetid) {
         .enter().append("rect")
         .attr("class", "bar")
         .attr("x", function (d) { return x(d.key); })
-        .attr("width", x.bandwidth())
+
+        .attr("width", 12)//x.bandwidth()
         .attr("y", function (d) { return y(d.val); })
         .attr("height", function (d) { return height - y(d.val); });
+
+    //
+    var balkenText = svg.selectAll(".balkentext").data(liste);
+
+    balkenText.enter().append("text")
+        .attr("class", "balkentext")
+        .attr("x", -200)
+        .attr("y", function (d) { return x(d.key); })
+        .text(function (d) { return d.key; })
+        
+        .attr("transform", "rotate(-90)")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "10px")
+        .attr("fill", "black");
+
+
+    balkenText.exit().remove();
 
     // add the x Axis
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
+        .call(d3.axisBottom(xachsenwerte));
 
     // add the y Axis
     svg.append("g")
@@ -212,13 +232,13 @@ function aktualisiereAmpel(listeModul, targetID, gesamtAmpelZyklen) {
 
     //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
     let d = d3.select(id).selectAll("p").data(listeModul);
-  
+
     //.enter().append(): Daten hinzufuegen falls es mehr Daten als Elemente im HTML gibt.
     //geschieht hier für jede Zeile von daten.
     d.enter().append("p")
         .attr("class", "percentage")
         .text(function (listeModul) {
-            return Math.round(listeModul.val/gesamtAmpelZyklen * 100) + "%";
+            return Math.round(listeModul.val / gesamtAmpelZyklen * 100) + "%";
         })
     //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
     d.exit().remove();
