@@ -18,4 +18,12 @@ ul {
   list-style-type: circel;
   color: white;
 }
+
+.trafficlight {
+  width: 50px;
+  height: 150px;
+  background-color: white;
+  border-radius: 50px;
+  margin: 10px;
+}
 /*# sourceMappingURL=styles.css.map */

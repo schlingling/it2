@@ -25,10 +25,11 @@
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">Ressourcencockpit Historie und Datensammlung</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+      aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-  
+
     <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         <li class="nav-item active">
@@ -40,10 +41,16 @@
       </ul>
     </div>
   </nav>
-
+  
+  <div class="trafficlight" id="trafficLight">
+    <div class="circle" color="red"></div>
+    <div class="circle" color="yellow"></div>
+    <div class="circle" color="green"></div>
+    <div class="circle" color="white"></div>
+  </div>
   <div class="container">
     <h1>Modul Fischertechnik</h1>
-    <table class="table">
+    <table class="table" id="tableFischertechnik">
       <h2>Anzahl Statusänderungen:</h2>
       <tbody>
         <tr>
@@ -51,34 +58,40 @@
             <h3>Hochregallager:</h3>
             <ul id="hochregallager"></ul>
           </td>
-          <td> <div id="hochregallagerG"></div></td><!-- Diagramm-->
+          <td>
+            <div id="hochregallagerG"></div>
+          </td><!-- Diagramm-->
         </tr>
         <tr>
           <td>
             <h3>Verteilstation:</h3>
             <ul id="verteilstation"></ul>
           </td>
-          <td><div id="verteilstationG"></div></td><!-- Diagramm-->
+          <td>
+            <div id="verteilstationG"></div>
+          </td><!-- Diagramm-->
         </tr>
         <tr>
           <td>
             <h3>Bearbeitungsstation:</h3>
             <ul id="bearbeitungsstation"></ul>
           </td>
-          <td><div id="bearbeitungsstationG"></div></td><!-- Diagramm-->
+          <td>
+            <div id="bearbeitungsstationG"></div>
+          </td><!-- Diagramm-->
         </tr>
         <tr>
           <td>
             <h3>Sortierstation:</h3>
             <ul id="sortierstation"></ul>
           </td>
-          <td><div id="sortierstationG"></div></td><!-- Diagramm-->
+          <td>
+            <div id="sortierstationG"></div>
+          </td><!-- Diagramm-->
         </tr>
       </tbody>
     </table>
-
-
-    <table class="table">
+    <table class="table" id="tableFischertechnik_wegstrecken">
       <h2>Kumulierte Wegstrecken:</h2>
       <tbody>
         <tr>
