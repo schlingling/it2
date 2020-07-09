@@ -89,8 +89,8 @@ function zeigeDiagram(liste, targetid) {
     console.log(liste)
     // set the dimensions and margins of the graph
     var margin = { top: 20, right: 20, bottom: 30, left: 40 },
-        width = 960 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        width = 600 - margin.left - margin.right,
+        height = 300 - margin.top - margin.bottom;
 
     // set the ranges
     var x = d3.scaleBand()
@@ -147,6 +147,7 @@ function mapModuleComulate(listeModul, listeGlobal) {
         if (listeModul.includes(d.key)) {
             //console.log(d)
             //console.log(d.val)
+            //TODO
             d.val = Math.round(d.val / 79)
             return (d);
         }
