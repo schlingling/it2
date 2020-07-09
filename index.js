@@ -45,12 +45,15 @@ function preprocess_rawData(rawData, error) {
     // console.log(countTaster),
     liste = [];
 
+    //Liste Ampel
+    listeAmpel = ["Ampel rot", "Ampel orange", "Ampel gruen", "Ampel weiss"]
+
     //Listen von Modul Fischertechnik
     listeHochregalFi = ["Referenztaster horizontal", "Referenztaster vertikal", "Referenztaster Ausleger vorne", "Referenztaster Ausleger hinten", "Lichtschranke innen", "Lichtschranke aussen"];
     listeVerteilstationFi = ["V-Referenzschalter vertikal", "V-Referenzschalter horizontal", "V-Referenzschalter drehen"]
     listeBearbeitungsstationFi = ["B-Motor Drehkranz im Uhrzeigersinn", "B-Motor Drehkranz gegen Uhrzeigersinn", "B-Motor Foerderband vorwaerts", "B-Motor Saege", "B-Motor Ofenschieber Einfahren", "B-Motor Ofenschieber Ausfahren", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Leuchte Ofen", "B-Referenzschalter Drehkranz (Pos. Sauger)", "B-Referenzschalter Drehkranz (Pos. Foerderband)", "B-Lichtschranke Ende Foerderband", "B-Referenzschalter Drehkranz (Pos. Saege)", "B-Referenzschalter Sauger (Pos. Drehkranz)", "B-Referenzschalter Ofenschieber Innen", "B-Referenzschalter Ofenschieber Aussen", "B-Referenzschalter Sauger (Pos. Brennofen)", "B-Lichtschranke Brennofen"]
     listeSortierstationFi = ["S-Lichtschranke Eingang", "S-Lichtschranke nach Farbsensor", "S-Lichtschranke weiss", "S-Lichtschranke rot", "S-Lichtschranke blau", "S-Motor Foerderband"]
-    listeComulate = ["H-vertikal", "H-horizontal", "V-vertikal", "V-drehen", "V-horizontal"];
+    listeComulate = ["H-vertikal", "H-horizontal", "V-vertikal", "V-drehen", "V-horizontal"]; //TODO
 
     //Listen von Modul Festo
     listeFesto = ["Umsetzer Endanschlag 1 (3B1)", "Umsetzer Endanschlag 2 (3B2)"]
@@ -63,6 +66,8 @@ function preprocess_rawData(rawData, error) {
     let mapVerteilstationFi = mapModule(listeVerteilstationFi, liste);
     let mapBearbeitungsstationFi = mapModule(listeBearbeitungsstationFi, liste);
     let mapSortierstationFi = mapModule(listeSortierstationFi, liste);
+    let mapAmpel = mapModule(listeAmpel,);
+
     let mapComulate = mapModuleComulate(listeComulate, liste); //ACHTUNG: Für Kummulierte Wegstrecke extra Mapmethode!
 
     let mapFesto = mapModule(listeFesto, liste);
@@ -71,6 +76,8 @@ function preprocess_rawData(rawData, error) {
     aktualisiereListe(mapVerteilstationFi, "verteilstation");
     aktualisiereListe(mapBearbeitungsstationFi, "bearbeitungsstation");
     aktualisiereListe(mapSortierstationFi, "sortierstation");
+
+    aktualisiereAmpel(listeAmpel,)
 
     aktualisiereListeComulate(mapComulate, "verteilstation_schwenkarm"); //ACHTUNG: Für Kummulierte Wegstrecke extra aktualisiere()!
 
