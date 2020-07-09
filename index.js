@@ -1,17 +1,12 @@
-
-
 function initialisiere() {
     let rawData = []
     rawData.push(d3.json("http://it2wi1.if-lab.de/rest/ft_ablauf"));
-    Promise.all(rawData).then((result) => preprocess_rawData(result), function (error) {
+    Promise.all(rawData).then((data) => preprocess_rawData(data), function (error) {
         console.log(error);
     });
-
 }
 
-
 function preprocess_rawData(rawData, error) {
-
     let valueToComulate = ["H-vertikal", "H-horizontal", "V-vertikal", "V-drehen", "V-horizontal"];
 
     let countTaster = {};
