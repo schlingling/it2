@@ -16,13 +16,11 @@ function preprocess_rawData(rawData, error) {
         i = 0;
         rawData[0].forEach(zeitpunkt => {
             for (const [key, val] of Object.entries(zeitpunkt.werte)) {
-
                 if (!countTaster[key]) {
                     if (val == " true") {
                         countTaster[key] = 1
                     } else if (val == " false") {
                         countTaster[key] = 0
-
                     } else {
                         countTaster[key] = 1 //need to be set to one, da mit 0 sonst nicht initialisiert 
                     }
@@ -34,10 +32,8 @@ function preprocess_rawData(rawData, error) {
                         //countTaster
                         // console.log(val)
                         countTaster[key] += parseInt(val, 10)
-
                     } else if ((rawData[0][i - 1].werte[key]) != val) {
                         countTaster[key] += 1
-
                     }
                 }
             }
