@@ -46,7 +46,10 @@ function preprocess_rawData(rawData, error) {
     liste = [];
 
     //Liste Ampel
-    listeAmpel = ["Ampel rot", "Ampel orange", "Ampel gruen", "Ampel weiss"]
+    listeAmpelrot = ["Ampel rot"]
+    listeAmpelorange = [ "Ampel orange"]
+    listeAmpelgruen = ["Ampel gruen"]
+    listeAmpelweiss = ["Ampel weiss"]
 
     //Listen von Modul Fischertechnik
     listeHochregalFi = ["Referenztaster horizontal", "Referenztaster vertikal", "Referenztaster Ausleger vorne", "Referenztaster Ausleger hinten", "Lichtschranke innen", "Lichtschranke aussen"];
@@ -66,7 +69,11 @@ function preprocess_rawData(rawData, error) {
     let mapVerteilstationFi = mapModule(listeVerteilstationFi, liste);
     let mapBearbeitungsstationFi = mapModule(listeBearbeitungsstationFi, liste);
     let mapSortierstationFi = mapModule(listeSortierstationFi, liste);
-    let mapAmpel = mapModule(listeAmpel,);
+
+    let mapAmpelrot = mapModule(listeAmpelrot, liste);
+    let mapAmpelorange = mapModule(listeAmpelorange, liste);
+    let mapAmpelgruen = mapModule(listeAmpelgruen, liste);
+    let mapAmpelweiss = mapModule(listeAmpelweiss, liste);
 
     let mapComulate = mapModuleComulate(listeComulate, liste); //ACHTUNG: Für Kummulierte Wegstrecke extra Mapmethode!
 
@@ -77,7 +84,10 @@ function preprocess_rawData(rawData, error) {
     aktualisiereListe(mapBearbeitungsstationFi, "bearbeitungsstation");
     aktualisiereListe(mapSortierstationFi, "sortierstation");
 
-    aktualisiereAmpel(listeAmpel,)
+    aktualisiereAmpel(mapAmpelrot, "lightred");
+    aktualisiereAmpel(mapAmpelorange, "lightyellow");
+    aktualisiereAmpel(mapAmpelgruen, "lightgreen");
+    aktualisiereAmpel(mapAmpelweiss, "lightwhite");
 
     aktualisiereListeComulate(mapComulate, "verteilstation_schwenkarm"); //ACHTUNG: Für Kummulierte Wegstrecke extra aktualisiere()!
 
@@ -179,6 +189,26 @@ function aktualisiereListe(listeModul, targetID) {
         .text(function (listeModul) {
             return listeModul.key + ": " + listeModul.val;
         });
+    //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
+    d.exit().remove();
+    //console.log(countTaster[0])
+}
+
+
+function aktualisiereAmpel(listeModul, targetID) {
+
+    id = "#" + targetID;
+
+    //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
+    let d = d3.select(id).selectAll("p").data(listeModul);
+  
+    //.enter().append(): Daten hinzufuegen falls es mehr Daten als Elemente im HTML gibt.
+    //geschieht hier für jede Zeile von daten.
+    d.enter().append("p")
+        .attr("class", "percentage")
+        .text(function (listeModul) {
+            return listeModul.val + " %";
+        })
     //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
     d.exit().remove();
     //console.log(countTaster[0])
