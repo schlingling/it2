@@ -20,10 +20,83 @@ ul {
 }
 
 .trafficlight {
-  width: 50px;
-  height: 150px;
+  width: 45px;
+  height: 170px;
   background-color: white;
-  border-radius: 50px;
+  border-radius: 40px;
   margin: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  position: relative;
+}
+
+/*.circle:after{
+    border-right: 3px solid rgba(255,255,255, 0.5);
+    border-radius: 50%;
+    content: '';
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 25px;
+    height: 25px;
+}
+*/
+.circle.red {
+  background-color: #c0392b;
+  background-origin: 0 0 10px 5px #c0392b;
+}
+
+.circle.yellow {
+  background-color: #f1c40f;
+  background-origin: 0 0 10px 5px #f1c40f;
+}
+
+.circle.green {
+  background-color: #2ecc71;
+  background-origin: 0 0 10px 5px #2ecc71;
+}
+
+.circle.white {
+  background-color: #dddddd;
+  background-origin: 0 0 10px 5px #dddddd;
+}
+
+.circle p {
+  text-align: center;
+  margin: 0px;
+  padding: 0px;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+
+.percentage {
+  font-size: smaller;
+  font-weight: 700;
+  position: absolute;
+  margin: 0px;
 }
 /*# sourceMappingURL=styles.css.map */
