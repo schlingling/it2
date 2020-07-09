@@ -23,109 +23,128 @@
 
 <body onload="initialisiere()">
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Ressourcencockpit Historie und Datensammlung</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
-      aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
 
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Fischertechnik <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Festo</a>
-        </li>
-      </ul>
-      <!-- Traffic Light -->
-      <div class="trafficlight" id="trafficlight">
-        <div class="circle red" color="red">
-          <p class="percentage">80%</p>
+  <div class="container">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Ressourcencockpit Historie und Datensammlung</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+        aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Fischertechnik <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Festo</a>
+          </li>
+        </ul>
+        <!-- Traffic Light -->
+        <div class="trafficlight" id="trafficlight">
+          <div class="circle red" color="red">
+            <p class="percentage">80%</p>
+          </div>
+          <div class="circle yellow" color="yellow">
+            <p class="percentage">10%</p>
+          </div>
+          <div class="circle green" color="green">
+            <p class="percentage">3%</p>
+          </div>
+          <div class="circle white" color="white">
+            <p class="percentage">7%</p>
+          </div>
         </div>
-        <div class="circle yellow" color="yellow"><p class="percentage">10%</p></div>
-        <div class="circle green" color="green"><p class="percentage">3%</p></div>
-        <div class="circle white" color="white"><p class="percentage">7%</p></div>
+      </div>
+    </nav>
+
+
+    <h1>Modul Fischertechnik</h1>
+    <h2>Anzahl Statusänderungen</h2>
+    <div class="row">
+      <div class="col-sm">
+        <h3>Hochregallager:</h3>
+        <ul id="hochregallager"></ul>
+      </div>
+      <div id="hochregallagerG" class="col-sm">
+      
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-sm">
+        <h3>Verteilstation:</h3>
+        <ul id="verteilstation"></ul>
+      </div>
+      <div id="verteilstationG" class="col-sm">
+
       </div>
     </div>
-  </nav>
-  
-  <div class="container">
-    <h1>Modul Fischertechnik</h1>
-    <table class="table" id="tableFischertechnik">
-      <h2>Anzahl Statusänderungen:</h2>
-      <tbody>
-        <tr>
-          <td>
-            <h3>Hochregallager:</h3>
-            <ul id="hochregallager"></ul>
-          </td>
-          <td>
-            <div id="hochregallagerG"></div>
-          </td><!-- Diagramm-->
-        </tr>
-        <tr>
-          <td>
-            <h3>Verteilstation:</h3>
-            <ul id="verteilstation"></ul>
-          </td>
-          <td>
-            <div id="verteilstationG"></div>
-          </td><!-- Diagramm-->
-        </tr>
-        <tr>
-          <td>
-            <h3>Bearbeitungsstation:</h3>
-            <ul id="bearbeitungsstation"></ul>
-          </td>
-          <td>
-            <div id="bearbeitungsstationG"></div>
-          </td><!-- Diagramm-->
-        </tr>
-        <tr>
-          <td>
-            <h3>Sortierstation:</h3>
-            <ul id="sortierstation"></ul>
-          </td>
-          <td>
-            <div id="sortierstationG"></div>
-          </td><!-- Diagramm-->
-        </tr>
-      </tbody>
-    </table>
-    <table class="table" id="tableFischertechnik_wegstrecken">
-      <h2>Kumulierte Wegstrecken:</h2>
-      <tbody>
-        <tr>
-          <td>
-            <h3>Verteilstation Schwenkarm:</h3>
-            <ul id="verteilstation_schwenkarm"></ul>
-          </td>
-          <td></td><!-- Diagramm-->
-        </tr>
-        <tr>
-          <td>
-            <h3>Sortierstation Fließband:</h3>
-            <ul id="sortierstation_ließband"></ul>
-          </td>
-          <td></td><!-- Diagramm-->
-        </tr>
-      </tbody>
-    </table>
+
+    <div class="row">
+      <div class="col-sm">
+        <h3>Bearbeitungsstation:</h3>
+        <ul id="bearbeitungsstation"></ul>
+      </div>
+      <div id="bearbeitungsstationG" class="col-sm">
+
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-sm">
+        <h3>Sortierstation:</h3>
+        <ul id="sortierstation"></ul>
+      </div>
+      <div id="sortierstationG" class="col-sm">
+
+      </div>
+
+    </div>
+
+
+    <h2>Kummulierte Wegstrecke</h2>
+    <div class="row">
+      <div class="col-sm">
+        <h3>Verteilstation Schwenkarm:</h3>
+        <ul id="verteilstation_schwenkarm"></ul>
+      </div>
+      <div class="col-sm">
+        One of three columns
+      </div>
+
+    </div>
+
+
+    <div class="row">
+      <div class="col-sm">
+        <h3>Sortierstation Fließband:</h3>
+        <ul id="sortierstation_ließband"></ul>
+      </div>
+      <div class="col-sm">
+        One of three columns
+      </div>
+
+    </div>
+
   </div>
+
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
-  </script>
+    </script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
     integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
-  </script>
+    </script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
     integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
-  </script>
+    </script>
 </body>
 
 </html>
