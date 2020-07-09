@@ -8,7 +8,8 @@ function initialisiere() {
 
 function preprocess_rawData(rawData, error) {
     let valueToComulate = ["H-vertikal", "H-horizontal", "V-vertikal", "V-drehen", "V-horizontal"];
-
+    let valueForAmpel =  ["Ampel rot", "Ampel orange", "Ampel gruen", "Ampel weiss"]
+    
     let countTaster = {};
     if (error) {
         console.log(error);
@@ -27,8 +28,9 @@ function preprocess_rawData(rawData, error) {
                 } else {
                     //console.log(key)
                     //console.log(valueToComulate.includes(key))
-
-                    if (valueToComulate.includes(key) && (rawData[0][i - 1].werte[key] != val)) {
+                    if (valueForAmpel.includes(key) && val == " true"){
+                        countTaster[key] += 0;
+                    } else if (valueToComulate.includes(key) && (rawData[0][i - 1].werte[key] != val)) {
                         //countTaster
                         // console.log(val)
                         countTaster[key] += parseInt(val, 10)
@@ -196,7 +198,7 @@ function aktualisiereListe(listeModul, targetID) {
 
 
 function aktualisiereAmpel(listeModul, targetID) {
-
+    console.log(listeModul)
     id = "#" + targetID;
 
     //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
