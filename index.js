@@ -129,7 +129,7 @@ function zeigeDiagram(liste, targetid) {
         .range([height, 0]);
 
     let svg = d3.select(id).append("svg")//Auf Webseite
-        .attr("width", width + margin.left + margin.right)
+        .attr("width", width + margin.left + margin.right + "vw")
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform",
