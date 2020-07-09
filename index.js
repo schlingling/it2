@@ -17,19 +17,27 @@ function preprocess_rawData(rawData, error) {
         i = 0;
         rawData[0].forEach(zeitpunkt => {
             for (const [key, val] of Object.entries(zeitpunkt.werte)) {
-                if (!countTaster[key]) {
+               
+                if (!countTaster.hasOwnProperty(key)) {
                     if (val == " true") {
                         countTaster[key] = 1
+                        
                     } else if (val == " false") {
                         countTaster[key] = 0
-                    } else {
+                       
+                    } else if (valueToComulate.includes(key)) {
                         countTaster[key] = 1 //need to be set to one, da mit 0 sonst nicht initialisiert 
-                    }
+                        
+                    } 
+                    
                 } else {
                     //console.log(key)
                     //console.log(valueToComulate.includes(key))
-                    if (valueForAmpel.includes(key) && val == " true"){
-                        countTaster[key] += 0;
+                    if (valueForAmpel.includes(key) ){
+                        if(val == " true"){
+                            countTaster[key] += 1;
+                        }
+                      
                     } else if (valueToComulate.includes(key) && (rawData[0][i - 1].werte[key] != val)) {
                         //countTaster
                         // console.log(val)
@@ -86,10 +94,12 @@ function preprocess_rawData(rawData, error) {
     aktualisiereListe(mapBearbeitungsstationFi, "bearbeitungsstation");
     aktualisiereListe(mapSortierstationFi, "sortierstation");
 
-    aktualisiereAmpel(mapAmpelrot, "lightred");
-    aktualisiereAmpel(mapAmpelorange, "lightyellow");
-    aktualisiereAmpel(mapAmpelgruen, "lightgreen");
-    aktualisiereAmpel(mapAmpelweiss, "lightwhite");
+
+    let gesamtAmpelZyklen = rawData[0].length;
+    aktualisiereAmpel(mapAmpelrot, "lightred", gesamtAmpelZyklen);
+    aktualisiereAmpel(mapAmpelorange, "lightyellow", gesamtAmpelZyklen);
+    aktualisiereAmpel(mapAmpelgruen, "lightgreen", gesamtAmpelZyklen);
+    aktualisiereAmpel(mapAmpelweiss, "lightwhite", gesamtAmpelZyklen);
 
     aktualisiereListeComulate(mapComulate, "verteilstation_schwenkarm"); //ACHTUNG: Für Kummulierte Wegstrecke extra aktualisiere()!
 
@@ -105,7 +115,7 @@ function zeigeDiagram(liste, targetid) {
 
     id = "#"+targetid;
 
-    console.log(liste)
+    //console.log(liste)
     // set the dimensions and margins of the graph
     var margin = { top: 20, right: 20, bottom: 30, left: 40 },
         width = 600 - margin.left - margin.right,
@@ -197,8 +207,7 @@ function aktualisiereListe(listeModul, targetID) {
 }
 
 
-function aktualisiereAmpel(listeModul, targetID) {
-    console.log(listeModul)
+function aktualisiereAmpel(listeModul, targetID, gesamtAmpelZyklen) {
     id = "#" + targetID;
 
     //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
@@ -209,7 +218,7 @@ function aktualisiereAmpel(listeModul, targetID) {
     d.enter().append("p")
         .attr("class", "percentage")
         .text(function (listeModul) {
-            return listeModul.val + " %";
+            return Math.round(listeModul.val/gesamtAmpelZyklen * 100) + "%";
         })
     //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
     d.exit().remove();
