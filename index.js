@@ -66,7 +66,9 @@ function preprocess_rawData(rawData, error) {
     listeVerteilstationFi = ["V-Referenzschalter vertikal", "V-Referenzschalter horizontal", "V-Referenzschalter drehen"]
     listeBearbeitungsstationFi = ["B-Motor Drehkranz im Uhrzeigersinn", "B-Motor Drehkranz gegen Uhrzeigersinn", "B-Motor Foerderband vorwaerts", "B-Motor Saege", "B-Motor Ofenschieber Einfahren", "B-Motor Ofenschieber Ausfahren", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Leuchte Ofen", "B-Referenzschalter Drehkranz (Pos. Sauger)", "B-Referenzschalter Drehkranz (Pos. Foerderband)", "B-Lichtschranke Ende Foerderband", "B-Referenzschalter Drehkranz (Pos. Saege)", "B-Referenzschalter Sauger (Pos. Drehkranz)", "B-Referenzschalter Ofenschieber Innen", "B-Referenzschalter Ofenschieber Aussen", "B-Referenzschalter Sauger (Pos. Brennofen)", "B-Lichtschranke Brennofen"]
     listeSortierstationFi = ["S-Lichtschranke Eingang", "S-Lichtschranke nach Farbsensor", "S-Lichtschranke weiss", "S-Lichtschranke rot", "S-Lichtschranke blau", "S-Motor Foerderband"]
-    listeComulate = ["H-vertikal", "H-horizontal", "V-vertikal", "V-drehen", "V-horizontal"]; //TODO
+    listeComulateHochregallager = ["H-vertikal", "H-horizontal"]; 
+    listeComulateVerteilstation = ["V-vertikal", "V-drehen", "V-horizontal"]; 
+   
 
     //Listen von Modul Festo
     listeFesto = ["Umsetzer Endanschlag 1 (3B1)", "Umsetzer Endanschlag 2 (3B2)"]
@@ -85,7 +87,8 @@ function preprocess_rawData(rawData, error) {
     let mapAmpelgruen = mapModule(listeAmpelgruen, liste);
     let mapAmpelweiss = mapModule(listeAmpelweiss, liste);
 
-    let mapComulate = mapModuleComulate(listeComulate, liste); //ACHTUNG: Für Kummulierte Wegstrecke extra Mapmethode!
+    let mapComulateHochregallager = mapModuleComulate(listeComulateHochregallager, liste); //ACHTUNG: Für Kummulierte Wegstrecke extra Mapmethode!
+    let mapComulateVerteilstation = mapModuleComulate(listeComulateVerteilstation, liste);
 
     let mapFesto = mapModule(listeFesto, liste);
 
@@ -101,7 +104,8 @@ function preprocess_rawData(rawData, error) {
     aktualisiereAmpel(mapAmpelgruen, "lightgreen", gesamtAmpelZyklen);
     aktualisiereAmpel(mapAmpelweiss, "lightwhite", gesamtAmpelZyklen);
 
-    aktualisiereListeComulate(mapComulate, "verteilstation_schwenkarm"); //ACHTUNG: Für Kummulierte Wegstrecke extra aktualisiere()!
+    aktualisiereListeComulate(mapComulateHochregallager, "hochregallager_comulate"); //ACHTUNG: Für Kummulierte Wegstrecke extra aktualisiere()!
+    aktualisiereListeComulate(mapComulateVerteilstation, "verteilstation_comulate"); //ACHTUNG: Für Kummulierte Wegstrecke extra aktualisiere()!
 
     zeigeDiagram(mapHochregalFi, "hochregallagerG");
     zeigeDiagram(mapVerteilstationFi, "verteilstationG");
