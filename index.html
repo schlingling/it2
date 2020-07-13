@@ -10,8 +10,8 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
     integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   <!-- das ist ein kommentar von nico -->
-<!-- das ist ein kommentar von nico -->
-  
+  <!-- das ist ein kommentar von nico -->
+
   <!-- einbinden von d3js -->
   <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
   <script type="text/javascript" src="index.js"></script>
@@ -56,71 +56,97 @@
   <div class="container">
 
 
-  
-  <h1>Modul Fischertechnik</h1>
-  <h2>Anzahl Statusänderungen</h2>
-  <div class="row">
-    <div class="col-6">
-      <h3>Hochregallager:</h3>
-      <ul id="hochregallager"></ul>
+
+    <h1>Modul Fischertechnik</h1>
+    <h2>Anzahl Statusänderungen</h2>
+    <div class="row">
+      <div class="col-6">
+        <h3>Hochregallager:</h3>
+        <ul id="hochregallager"></ul>
+      </div>
+      <div id="hochregallagerG" class="col-6">
+        <!--Graph-->
+      </div>
+
     </div>
-    <div id="hochregallagerG" class="col-6">
-      <!--Graph-->
+
+    <div class="row">
+      <div class="col-6">
+        <h3>Verteilstation:</h3>
+        <ul id="verteilstation"></ul>
+      </div>
+      <div id="verteilstationG" class="col-6">
+
+      </div>
     </div>
+
+    <div class="row">
+      <div class="col-6">
+        <h3>Bearbeitungsstation:</h3>
+        <ul id="bearbeitungsstation"></ul>
+      </div>
+      <div id="bearbeitungsstationG" class="col-6">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        <h3>Sortierstation:</h3>
+        <ul id="sortierstation"></ul>
+      </div>
+      <div id="sortierstationG" class="col-6">
+      </div>
+    </div>
+
+
+    <h2>Kummulierte Wegstrecke</h2>
+    <div class="row">
+      <div class="col-6">
+        <h3>Verteilstation Schwenkarm:</h3>
+        <ul id="verteilstation_comulate"></ul>
+      </div>
+      <div class="col-6">
+        One of three columns
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        <h3>Hochregallager:</h3>
+        <ul id="hochregallager_comulate"></ul>
+      </div>
+      <div class="col-6">
+        One of three columns
+      </div>
+    </div>
+
+
+    <h2>Motorenlaufzeit</h2>
+    <div class="row">
+      <div class="col-6">
+        <h3>Bearbeitungsstation</h3>
+        <ul id="bearbeitungsstation_motorenlaufzeit"></ul>
+      </div>
+      <div class="col-6">
+        One of three columns
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        <h3>Sortierstation</h3>
+        <ul id="sortierstation_motorenlaufzeit"></ul>
+      </div>
+      <div class="col-6">
+        One of three columns
+      </div>
+    </div>
+
 
   </div>
 
-  <div class="row">
-    <div class="col-6">
-      <h3>Verteilstation:</h3>
-      <ul id="verteilstation"></ul>
-    </div>
-    <div id="verteilstationG" class="col-6">
-
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-6">
-      <h3>Bearbeitungsstation:</h3>
-      <ul id="bearbeitungsstation"></ul>
-    </div>
-    <div id="bearbeitungsstationG" class="col-6">
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-6">
-      <h3>Sortierstation:</h3>
-      <ul id="sortierstation"></ul>
-    </div>
-    <div id="sortierstationG" class="col-6">
-    </div>
-  </div>
 
 
-  <h2>Kummulierte Wegstrecke</h2>
-  <div class="row">
-    <div class="col-6">
-      <h3>Verteilstation Schwenkarm:</h3>
-      <ul id="verteilstation_schwenkarm"></ul>
-    </div>
-    <div class="col-6">
-      One of three columns
-    </div>
-  </div>
-
-
-  <div class="row">
-    <div class="col-6">
-      <h3>Sortierstation Fließband:</h3>
-      <ul id="sortierstation_ließband"></ul>
-    </div>
-    <div class="col-sm">
-      One of three columns
-    </div>
-  </div>
-  </div>
 
 
   <!-- Optional JavaScript -->
