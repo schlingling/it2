@@ -101,7 +101,7 @@ function preprocess_rawData(rawData, error) {
                     }
                 } else if (valueOfenRausRein.includes(key)) {// Ofen raus rein
                     if (val == " true") {
-                        countdictionary["B-Motor Ofenschieber RausRein"] += 5; //in CM
+                        countdictionary["B-Motor Ofenschieber RausRein"] = (parseFloat(countdictionary["B-Motor Ofenschieber RausRein"]) + 5).toFixed(1); //in CM
                     }
                 } else if (valueOfenBearbeitung.includes(key)) {// Ofen Bearbeitung
                     if (val == " true") {
@@ -140,8 +140,7 @@ function preprocess_rawData(rawData, error) {
     listeUmdrehungenVerteilstation = ["V-drehen"];
 
     //Motorenlaufzeit
-    listeOfenBearbeitung = ["B-Motor Drehkranz Bearbeitung"];
-    listeOfenRausRein = ["B-Motor Ofenschieber RausRein"];
+    listeOfenBearbeitungUndRausRein = ["B-Motor Drehkranz Bearbeitung", "B-Motor Ofenschieber RausRein"];
     listeToCountOnTimeBearbeitungsstation = ["B-Motor Saege", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Motor Foerderband vorwaerts"]; // Bearbeitungsstation motoren sowie fliessbaender
     listeToCountOnTimeSortierstation = ["S-Motor Foerderband"];
 
@@ -174,6 +173,7 @@ function preprocess_rawData(rawData, error) {
     let mapHochregalWegstrecken = mapModule(listeComulateHochregallager, bereinigte_cumulatedValueOverTime);
     let mapVerteilstationWegstrecken = mapModule(listeComulateVerteilstation,bereinigte_cumulatedValueOverTime);
     let mapVerteilstationUmdrehungen = mapModule(listeUmdrehungenVerteilstation, bereinigte_cumulatedValueOverTime);
+    let mapOfenBearbeitungUndRausReinWegstrecke = mapModule(listeOfenBearbeitung, liste);
 
     //console.log(bereinigte_cumulatedValueOverTime)
     //console.log(mapHochregalWegstrecken)
@@ -181,12 +181,11 @@ function preprocess_rawData(rawData, error) {
     aktualisiereListeComulate(mapHochregalWegstrecken, "hochregallager_comulate", "cm")
     aktualisiereListeComulate(mapVerteilstationWegstrecken, "verteilstation_comulate", "cm")
     aktualisiereListeComulate(mapVerteilstationUmdrehungen, "verteilstation_umdrehungen_schwenkarm", "Umdrehungen")
+    aktualisiereListe(mapOfenBearbeitungUndRausReinWegstrecke, "bearbeitungsstation_cumulate", " cm")
     
     //motorenlaufzeit
-    let mapOfenBearbeitungMotorenlaufzeit = mapModule(listeOfenBearbeitung, liste);
 
     //anzeige der motorenlaufzeiten
-    aktualisiereListe(mapOfenBearbeitungMotorenlaufzeit, "bearbeitungsstation_cumulate", " cm")
 
     //Ampel
     let mapAmpelrot = mapModule(listeAmpelrot, liste);
