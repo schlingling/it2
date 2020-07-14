@@ -144,34 +144,33 @@ function preprocess_rawData(rawData, error) {
     let mapVerteilstationFi = mapModule(listeVerteilstationFi, liste);
     let mapBearbeitungsstationFi = mapModule(listeBearbeitungsstationFi, liste);
     let mapSortierstationFi = mapModule(listeSortierstationFi, liste);
-    let mapAmpelrot = mapModule(listeAmpelrot, liste);//Ampel
-    let mapAmpelorange = mapModule(listeAmpelorange, liste);
-    let mapAmpelgruen = mapModule(listeAmpelgruen, liste);
-    let mapAmpelweiss = mapModule(listeAmpelweiss, liste);
     let mapFesto = mapModule(listeFesto, liste);//Festo
-
+    
     //textuelleaenderungen  anzeigen
     aktualisiereListe(mapHochregalFi, "hochregallager");
     aktualisiereListe(mapVerteilstationFi, "verteilstation");
     aktualisiereListe(mapBearbeitungsstationFi, "bearbeitungsstation");
     aktualisiereListe(mapSortierstationFi, "sortierstation");
+    //diagramme anzeigen
+    zeigeDiagram(mapHochregalFi, "hochregallagerG");
+    zeigeDiagram(mapVerteilstationFi, "verteilstationG");
+    zeigeDiagram(mapBearbeitungsstationFi, "bearbeitungsstationG");
+    zeigeDiagram(mapSortierstationFi, "sortierstationG");
     
-    console.log(mapHochregalFi)
-    console.log(bereinigte_cumulatedValueOverTime)
-
+    //console.log(bereinigte_cumulatedValueOverTime)
     aktualisiereListeComulate(bereinigte_cumulatedValueOverTime, "hochregallager_comulate")
-
-
+    
+    //Ampel
+    let mapAmpelrot = mapModule(listeAmpelrot, liste);
+    let mapAmpelorange = mapModule(listeAmpelorange, liste);
+    let mapAmpelgruen = mapModule(listeAmpelgruen, liste);
+    let mapAmpelweiss = mapModule(listeAmpelweiss, liste);
+    //ampel anzeigen
     let gesamtAmpelZyklen = rawData[0].length;
     aktualisiereAmpel(mapAmpelrot, "lightred", gesamtAmpelZyklen);
     aktualisiereAmpel(mapAmpelorange, "lightyellow", gesamtAmpelZyklen);
     aktualisiereAmpel(mapAmpelgruen, "lightgreen", gesamtAmpelZyklen);
     aktualisiereAmpel(mapAmpelweiss, "lightwhite", gesamtAmpelZyklen);
-
-    zeigeDiagram(mapHochregalFi, "hochregallagerG");
-    zeigeDiagram(mapVerteilstationFi, "verteilstationG");
-    zeigeDiagram(mapBearbeitungsstationFi, "bearbeitungsstationG");
-    zeigeDiagram(mapSortierstationFi, "sortierstationG");
 }
 
 function aktualisiereListeComulate(listeModul, targetID) {
