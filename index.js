@@ -44,15 +44,15 @@ function preprocess_rawData(rawData, error) {
         }
     });
 
-    let bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, "H-horizontal", 78, 6) // in cm// dict, name des sensors, teiler (1cm entspricht teiler), einheit
-    bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "H-vertikal", 78, 8) // in cm
-    bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-vertikal", 78, 2) // in cm
+    let bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, "H-horizontal", 78.6) // in cm// dict, name des sensors, teiler (1cm entspricht teiler), einheit
+    bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "H-vertikal", 78.8) // in cm
+    bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-vertikal", 78.2) // in cm
     bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-drehen", 2264) // in Anzahl Umdrehungen
     bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-horizontal", 67) // in Anzahl Umdrehungen
 
 
     //console.log(cumulatedValueOverTime)
-    //console.log(bereinigte_cumulatedValueOverTime);
+    console.log(bereinigte_cumulatedValueOverTime);
 
 
     // addiere alle Anzahl der Statusänderungen sowie kumuliere alle wegstrecken um pro sensor ein 
@@ -99,11 +99,11 @@ function preprocess_rawData(rawData, error) {
                     }
                 } else if (valueOfenRausRein.includes(key)) {// Ofen raus rein
                     if (val == " true") {
-                        countdictionary["B-Motor Ofenschieber RausRein"] = (parseFloat(countdictionary["B-Motor Ofenschieber RausRein"]) + 5).toFixed(1); //in CM
+                        countdictionary["B-Motor Ofenschieber RausRein"] = Math.round((parseFloat(countdictionary["B-Motor Ofenschieber RausRein"]) + 5),1); //in CM
                     }
                 } else if (valueOfenBearbeitung.includes(key)) {// Ofen Bearbeitung
                     if (val == " true") {
-                        countdictionary["B-Motor Drehkranz Bearbeitung"] = (parseFloat(countdictionary["B-Motor Drehkranz Bearbeitung"]) + 19.1).toFixed(1);// in CM
+                        countdictionary["B-Motor Drehkranz Bearbeitung"] = Math.round((parseFloat(countdictionary["B-Motor Drehkranz Bearbeitung"]) + 19.1),1);// in CM
                     }
                 } else if (valueToCountOnTime.includes(key)) {
                     if (val == " true") {
@@ -116,7 +116,6 @@ function preprocess_rawData(rawData, error) {
         }
         i++;
     });
-
 
 
     liste = [];
@@ -167,12 +166,30 @@ function preprocess_rawData(rawData, error) {
     zeigeDiagram(mapBearbeitungsstationFi, "bearbeitungsstationG");
     zeigeDiagram(mapSortierstationFi, "sortierstationG");
     
+    
+    let wegstreckenG = bereinigte_cumulatedValueOverTime.filter(function(x){
+        if (x.name == "V-drehen"){
+            return false;
+        }
+        return true;
+    })
+
+    console.log(wegstreckenG);
+    zeigeLinePlot(wegstreckenG);
+    
+
+    
     //console.log(bereinigte_cumulatedValueOverTime)
     //kumulierte wegstrecken und umdrehungen teile die sensoren nach modulen auf
     let mapHochregalWegstrecken = mapModule(listeComulateHochregallager, bereinigte_cumulatedValueOverTime);
     let mapVerteilstationWegstrecken = mapModule(listeComulateVerteilstation,bereinigte_cumulatedValueOverTime);
     let mapVerteilstationUmdrehungen = mapModule(listeUmdrehungenVerteilstation, bereinigte_cumulatedValueOverTime);
     let mapOfenBearbeitungUndRausReinWegstrecke = mapModule(listeOfenBearbeitungUndRausRein, liste);
+
+
+    
+
+
 
     //console.log(bereinigte_cumulatedValueOverTime)
     //console.log(mapHochregalWegstrecken)
@@ -226,7 +243,7 @@ function bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, nameDe
             return {
                 name: datarow.name,
                 werte: datarow.werte.map(function (data) {
-                    return { datum: data.datum, wert: (parseInt(data.wert) / teiler).toFixed(1) };// rundet auf 1 nachkommastelle den neuen wert genau
+                    return { datum: data.datum, wert: Math.round((parseInt(data.wert) / teiler),1) };// rundet auf 1 nachkommastelle den neuen wert genau
                 })
             }
         } else {
@@ -238,7 +255,7 @@ function bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, nameDe
 
 function zeigeDiagram(liste, targetid) {
 
-    console.log(liste)
+   
     liste = liste.filter(function(x){
 
         if (x.val == 0){
@@ -246,7 +263,7 @@ function zeigeDiagram(liste, targetid) {
         }
         return true;
     });
-    console.log(liste)
+   
     id = "#" + targetid;
     d3.select(id).selectAll("*").remove();
 
@@ -321,61 +338,6 @@ function zeigeDiagram(liste, targetid) {
 
 }
 
-function zeigeLinePlot(liste, targetid){
-    // set the dimensions and margins of the graph
-var margin = {top: 10, right: 30, bottom: 30, left: 60},
-width = 460 - margin.left - margin.right,
-height = 400 - margin.top - margin.bottom;
-
-// append the svg object to the body of the page
-var svg = d3.select("#my_dataviz")
-.append("svg")
-.attr("width", width + margin.left + margin.right)
-.attr("height", height + margin.top + margin.bottom)
-.append("g")
-.attr("transform",
-      "translate(" + margin.left + "," + margin.top + ")");
-
-//Read the data
-d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/3_TwoNumOrdered_comma.csv",
-
-// When reading the csv, I must format variables:
-function(d){
-return { date : d3.timeParse("%Y-%m-%d")(d.date), value : d.value }
-},
-
-// Now I can use this dataset:
-function(data) {
-
-// Add X axis --> it is a date format
-var x = d3.scaleTime()
-  .domain(d3.extent(data, function(d) { return d.date; }))
-  .range([ 0, width ]);
-svg.append("g")
-  .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x));
-
-// Add Y axis
-var y = d3.scaleLinear()
-  .domain([0, d3.max(data, function(d) { return +d.value; })])
-  .range([ height, 0 ]);
-svg.append("g")
-  .call(d3.axisLeft(y));
-
-// Add the line
-svg.append("path")
-  .datum(data)
-  .attr("fill", "none")
-  .attr("stroke", "steelblue")
-  .attr("stroke-width", 1.5)
-  .attr("d", d3.line()
-    .x(function(d) { return x(d.date) })
-    .y(function(d) { return y(d.value) })
-    )
-
-})
-}
-
 function mapModule(listeModul, listeGlobal) {
     let filteredListe = listeGlobal.map(function (d) {
         if (listeModul.includes(d.key) || listeModul.includes(d.name)) { //name war noetig weil ich in der zweiten liste comulate name statt key verwendet habe...
@@ -431,3 +393,130 @@ function aktualisiereAmpel(listeModul, targetID, gesamtAmpelZyklen) {
 
 
 
+function zeigeLinePlot(sensorDaten) {
+
+    console.log(sensorDaten);
+
+    let width;
+    let heigh;
+    let margin;
+    let zeichenflaeche;
+    let x;
+    let y;
+    let farben;
+    let linienFunktion;
+    let parseTime = d3.timeParse("%d.%m.%Y %H:%M:%S");
+
+    //Inhalt
+    d3.select("#kummulierteWegStreckeG").selectAll("*").remove()
+
+    svg = d3.select("#kummulierteWegStreckeG").append("svg")//Auf Webseite
+        .attr("width", 400)
+        .attr("height", 300)
+       
+
+    //Statische Felder
+    //svg = d3.select("svg");
+    margin = { top: 20, right: 80, bottom: 30, left: 50 };
+    width = svg.attr("width") - margin.left - margin.right;
+    height = svg.attr("height") - margin.top - margin.bottom;
+    zeichenflaeche = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    //Definition der Achstypen und Größe
+    x = d3.scaleTime().range([0, width]);
+    y = d3.scaleLinear().range([height, 0]);
+    farben = d3.scaleOrdinal(d3.schemeCategory10); //andere Beispiele: schemePastel2, schemeSet1  
+
+    //Linienfunktion
+    linienFunktion = d3.line()
+        .curve(d3.curveLinear) //andere Beispiele: curveBasis, curveStep, curveNatural
+        .x(function (d) {
+            return x(parseTime(d.datum));//X-Koordinate
+        })
+        .y(function (d) {
+            return y(d.wert);//Y-Koordinate
+        });
+
+
+
+    //Wertebereich X-Achse
+    x.domain(d3.extent(sensorDaten[0].werte, function (sensorWert) {
+        return parseTime(sensorWert.datum);
+    }));
+
+    //Wertebereich Y-Achse
+    let minimum = d3.min(sensorDaten, function (sensor) {
+        return d3.min(sensor.werte, function (sensorWerte) {
+            return sensorWerte.wert;
+        });
+    });
+    let maximum = d3.max(sensorDaten, function (sensor) {
+        return d3.max(sensor.werte, function (sensorWerte) {
+            return sensorWerte.wert;
+        });
+    });
+
+
+    console.log(minimum)
+    console.log(maximum)
+    y.domain([minimum, maximum]);
+
+
+    //Entfernen von alten Graphdaten
+    zeichenflaeche.selectAll(".axis").remove();
+    zeichenflaeche.selectAll(".person").remove();
+
+    //X-Achse zeichnen
+    zeichenflaeche.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+        .append("text")
+        .attr("x", width)
+        .attr("dx", "-1em")
+        .attr("dy", "-0.21em")
+        .attr("fill", "#000")
+        .text("Zeit");
+
+    //Y-Achse zeichnen
+    zeichenflaeche.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y))
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "0.71em")
+        .attr("fill", "#000")
+        .text("Wegstrecke in cm");
+
+    //Personen Linien zeichnen
+    var personLinien = zeichenflaeche.selectAll(".person")
+        .data(sensorDaten).enter().append("g")
+        .attr("class", "person");
+
+    personLinien.append("path")
+        .attr("class", "line")
+        .attr("d", function (person) {
+            return linienFunktion(person.werte);
+        })
+        .attr("fill", "none")
+        .attr("stroke-width", "1.5")
+        .style("stroke", function (person, iteration) {
+            return farben(iteration);//ermittelt die Farbe
+        });
+
+    //Liniennamen zeichnen
+    personLinien.append("text")
+        .datum(function (person) {
+            return {
+                personenName: person.name,
+                personenWert: person.werte[person.werte.length - 1]
+            };
+        })
+        .attr("transform", function (dataVonDatum) { return "translate(" + x(parseTime(dataVonDatum.personenWert.datum)) + "," + y(dataVonDatum.personenWert.wert) + ")"; })
+        .attr("x", 3)
+        .attr("dy", "0.35em")
+        .style("font", "10px sans-serif")
+        .text(function (dataVonDatum) { return dataVonDatum.personenName; });
+
+}

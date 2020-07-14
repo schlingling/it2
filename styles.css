@@ -4,7 +4,6 @@ body {
 
 h1 {
   font-size: 30px;
-  color: #fdc220;
 }
 
 .container {
@@ -33,11 +32,12 @@ h1 {
 }
 
 h2 {
-  color: white;
+  color: #fdc220;
 }
 
 h3 {
   color: #bdbdbd;
+  font-size: 20px;
 }
 
 ul {
