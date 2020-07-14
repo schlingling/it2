@@ -133,7 +133,6 @@ function preprocess_rawData(rawData, error) {
     listeComulateHochregallager = ["H-vertikal", "H-horizontal"];
     listeComulateVerteilstation = ["V-vertikal", "V-drehen", "V-horizontal"];
 
-
     //Listen von Modul Festo
     listeFesto = ["Umsetzer Endanschlag 1 (3B1)", "Umsetzer Endanschlag 2 (3B2)"]
 
@@ -141,19 +140,17 @@ function preprocess_rawData(rawData, error) {
         liste.push({ key, val })
     }
 
-    let mapHochregalFi = mapModule(listeHochregalFi, liste);
+    let mapHochregalFi = mapModule(listeHochregalFi, liste);//Fischertechnik
     let mapVerteilstationFi = mapModule(listeVerteilstationFi, liste);
     let mapBearbeitungsstationFi = mapModule(listeBearbeitungsstationFi, liste);
     let mapSortierstationFi = mapModule(listeSortierstationFi, liste);
-
-    let mapAmpelrot = mapModule(listeAmpelrot, liste);
+    let mapAmpelrot = mapModule(listeAmpelrot, liste);//Ampel
     let mapAmpelorange = mapModule(listeAmpelorange, liste);
     let mapAmpelgruen = mapModule(listeAmpelgruen, liste);
     let mapAmpelweiss = mapModule(listeAmpelweiss, liste);
+    let mapFesto = mapModule(listeFesto, liste);//Festo
 
-    let mapFesto = mapModule(listeFesto, liste);
-
-
+    //textuelleaenderungen  anzeigen
     aktualisiereListe(mapHochregalFi, "hochregallager");
     aktualisiereListe(mapVerteilstationFi, "verteilstation");
     aktualisiereListe(mapBearbeitungsstationFi, "bearbeitungsstation");
@@ -282,7 +279,7 @@ function zeigeDiagram(liste, targetid) {
 }
 
 function mapModule(listeModul, listeGlobal) {
-    let filteredListe = listeGlobal.map(function (d, i) {
+    let filteredListe = listeGlobal.map(function (d) {
         if (listeModul.includes(d.key)) {
             return (d);
         }
