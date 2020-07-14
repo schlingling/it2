@@ -186,8 +186,10 @@ function preprocess_rawData(rawData, error) {
     
     //motorenlaufzeit
     let mapBearbeitungsstationMotorenlaufzeit = mapModule(listeToCountOnTimeBearbeitungsstation, liste);
-    //anzeige der motorenlaufzeiten
+    let mapSortierstationMotorenlaufzeit = mapModule(listeToCountOnTimeSortierstation, liste);
+
     aktualisiereListe(mapBearbeitungsstationMotorenlaufzeit, "bearbeitungsstation_motorenlaufzeit", " sek")
+    aktualisiereListe(mapSortierstationMotorenlaufzeit, "sortierstation_motorenlaufzeit", " sek")
 
     //Ampel
     let mapAmpelrot = mapModule(listeAmpelrot, liste);
