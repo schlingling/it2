@@ -66,15 +66,20 @@ function preprocess_rawData(rawData, error) {
                 if (valueOfenRausRein.includes(key)) {
                     if (val == " true") {
                         countdictionary["B-Motor Ofenschieber RausRein"] = 5; //in CM
-                    } else {
+                       
+                    } else if (val == " false"){
                         countdictionary["B-Motor Ofenschieber RausRein"] = 0;
                     }
+                    countdictionary["B-Motor Ofenschieber Einfahren"] = -1; //verwendet um initialisierung der neuen variable raus rein anzuzeigen
+                    countdictionary["B-Motor Ofenschieber Ausfahren"] = -1; //verwendet um initialisierung der neuen variable raus rein anzuzeigen
                 } else if (valueOfenBearbeitung.includes(key)) {
                     if (val == " true") {
-                        countdictionary["B-Motor Drehkranz Bearbeitung"] = 19, 1; //in CM
-                    } else {
+                        countdictionary["B-Motor Drehkranz Bearbeitung"] = 19,1; //in CM
+                    } else if (val == " false"){
                         countdictionary["B-Motor Drehkranz Bearbeitung"] = 0;
                     }
+                    countdictionary["B-Motor Drehkranz im Uhrzeigersinn"] = -1;//verwendet um initialisierung der neuen variable raus rein anzuzeigen
+                    countdictionary["B-Motor Drehkranz gegen Uhrzeigersinn"] = -1;//verwendet um initialisierung der neuen variable raus rein anzuzeigen
 
                 } else if (valueToCountOnTime.includes(key)) {
                     if (val == " true") {
@@ -100,7 +105,7 @@ function preprocess_rawData(rawData, error) {
                     }
                 } else if (valueOfenBearbeitung.includes(key)) {// Ofen Bearbeitung
                     if (val == " true") {
-                        countdictionary["B-Motor Drehkranz Bearbeitung"] += 19;// in CM
+                        countdictionary["B-Motor Drehkranz Bearbeitung"] = parseFloat(countdictionary["B-Motor Drehkranz Bearbeitung"]) + 19,1;// in CM
                     }
                 } else if (valueToCountOnTime.includes(key)) {
                     if (val == " true") {
@@ -181,7 +186,7 @@ function preprocess_rawData(rawData, error) {
     let mapOfenBearbeitungMotorenlaufzeit = mapModule(listeOfenBearbeitung, liste);
 
     //anzeige der motorenlaufzeiten
-    aktualisiereListe(mapOfenBearbeitungMotorenlaufzeit, "bearbeitungsstation_cumulate", " sek")
+    aktualisiereListe(mapOfenBearbeitungMotorenlaufzeit, "bearbeitungsstation_cumulate", " cm")
 
     //Ampel
     let mapAmpelrot = mapModule(listeAmpelrot, liste);
@@ -219,7 +224,7 @@ function bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, nameDe
             return {
                 name: datarow.name,
                 werte: datarow.werte.map(function (data) {
-                    return { datum: data.datum, wert: (parseInt(data.wert) / teiler).toFixed(1) };// rundet auf eine nachkommastelle den neuen wert genau
+                    return { datum: data.datum, wert: (parseInt(data.wert) / teiler).toFixed(0) };// rundet auf 0 nachkommastelle den neuen wert genau
                 })
             }
         } else {
