@@ -99,4 +99,15 @@ ul {
   position: absolute;
   margin: 0px;
 }
+
+label {
+  display: block;
+  font: 1rem 'Fira Sans', sans-serif;
+  color: white;
+}
+
+input,
+label {
+  margin: 0 0.5rem 0;
+}
 /*# sourceMappingURL=styles.css.map */
