@@ -74,7 +74,7 @@ function preprocess_rawData(rawData, error) {
                     countdictionary["B-Motor Ofenschieber Ausfahren"] = -1; //verwendet um initialisierung der neuen variable raus rein anzuzeigen
                 } else if (valueOfenBearbeitung.includes(key)) {
                     if (val == " true") {
-                        countdictionary["B-Motor Drehkranz Bearbeitung"] = 19,1; //in CM
+                        countdictionary["B-Motor Drehkranz Bearbeitung"] = 19.1; //in CM
                     } else if (val == " false"){
                         countdictionary["B-Motor Drehkranz Bearbeitung"] = 0;
                     }
@@ -105,7 +105,7 @@ function preprocess_rawData(rawData, error) {
                     }
                 } else if (valueOfenBearbeitung.includes(key)) {// Ofen Bearbeitung
                     if (val == " true") {
-                        countdictionary["B-Motor Drehkranz Bearbeitung"] = parseFloat(countdictionary["B-Motor Drehkranz Bearbeitung"]) + 19,1;// in CM
+                        countdictionary["B-Motor Drehkranz Bearbeitung"] = (parseFloat(countdictionary["B-Motor Drehkranz Bearbeitung"]) + 19.1).toFixed(1);// in CM
                     }
                 } else if (valueToCountOnTime.includes(key)) {
                     if (val == " true") {
@@ -224,7 +224,7 @@ function bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, nameDe
             return {
                 name: datarow.name,
                 werte: datarow.werte.map(function (data) {
-                    return { datum: data.datum, wert: (parseInt(data.wert) / teiler).toFixed(0) };// rundet auf 0 nachkommastelle den neuen wert genau
+                    return { datum: data.datum, wert: (parseInt(data.wert) / teiler).toFixed(1) };// rundet auf 1 nachkommastelle den neuen wert genau
                 })
             }
         } else {
