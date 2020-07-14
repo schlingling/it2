@@ -1,10 +1,21 @@
 function initialisiere() {
+    
+    // Data Picker Initialization
+    
+    
     let rawData = []
     rawData.push(d3.json("https://it2wi1.if-lab.de/rest/ft_ablauf"));
     Promise.all(rawData).then((data) => preprocess_rawData(data), function (error) {
         console.log(error);
     });
+
+    
 }
+
+function aktualisiereSeite(data) {
+    preprocess_rawData([data]); 
+}
+
 
 function preprocess_rawData(rawData, error) {
     let valueToComulate = ["H-vertikal", "H-horizontal", "V-vertikal", "V-drehen", "V-horizontal"];
@@ -265,6 +276,8 @@ function zeigeDiagram(liste, targetid) {
     // add the y Axis
     svg.append("g")
         .call(d3.axisLeft(y));
+
+
 
 }
 

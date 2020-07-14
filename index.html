@@ -15,9 +15,17 @@
   <!-- einbinden von d3js -->
   <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
   <script type="text/javascript" src="index.js"></script>
+  <script type="text/javascript" src="filter.js"></script>
 
 
   <link rel="stylesheet" type="text/css" href="styles.css" />
+
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+
 
   <title>Systemstatus 2</title>
 </head>
@@ -39,25 +47,57 @@
           <a class="nav-link" href="#">Festo</a>
         </li>
       </ul>
-      <!-- Traffic Light -->
-      <div class="trafficlight" id="trafficlight">
-        <div id="lightred" class="circle red" color="red">
-        </div>
-        <div id="lightyellow" class="circle yellow" color="yellow">
-        </div>
-        <div id="lightgreen" class="circle green" color="green">
-        </div>
-        <div id="lightwhite" class="circle white" color="white">
-        </div>
-      </div>
+
 
   </nav>
 
+
+
+
   <div class="container">
-
-
-
     <h1>Modul Fischertechnik</h1>
+
+    <div class="row">
+      <div class="col-3"> 
+        <!-- Traffic Light -->
+        <div class="trafficlight" id="trafficlight">
+          <div id="lightred" class="circle red" color="red">
+          </div>
+          <div id="lightyellow" class="circle yellow" color="yellow">
+          </div>
+          <div id="lightgreen" class="circle green" color="green">
+          </div>
+          <div id="lightwhite" class="circle white" color="white">
+          </div>
+        </div>
+
+      </div>
+      
+      
+      <div class="col-3">
+        <label for="filterfrom">Choose a start time </label>
+        <input type="datetime-local" id="filterfrom" name="filterfrom" value="2019-05-15T12:00"
+          min="2019-05-01T00:00" max="2020-12-21T00:00">
+         
+      </div>
+
+
+      <div class="col-3">
+        <label for="filterto">Choose a end time</label>
+        <input type="datetime-local" id="filterto" name="filterto" value="2019-05-15T12:01"
+        min="2019-05-01T00:00" max="2020-12-21T00:00">
+        
+      </div>
+
+
+      <div class="col-3">
+        <button type="button" class="btn btn-success" onclick="prepareDate()">Werte abfragen</button>
+
+      </div>
+
+    </div>
+
+    
     <h2>Anzahl Statusänderungen</h2>
     <div class="row">
       <div class="col-6">
@@ -160,6 +200,9 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
     integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
     </script>
+
+
+
 </body>
 
 </html>
