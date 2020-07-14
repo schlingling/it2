@@ -1,8 +1,6 @@
 function initialisiere() {
     
     // Data Picker Initialization
-    
-    
     let rawData = []
     rawData.push(d3.json("https://it2wi1.if-lab.de/rest/ft_ablauf"));
     Promise.all(rawData).then((data) => preprocess_rawData(data), function (error) {
@@ -208,6 +206,7 @@ function aktualisiereListeComulate(listeModul, targetID, einheit) {
 
     id = "#" + targetID;
     //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
+    d3.select(id).selectAll("*").remove();
     let d = d3.select(id).selectAll("li").data(listeModul);
     //console.log(d)
     //console.log(countTaster)
@@ -240,6 +239,7 @@ function bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, nameDe
 function zeigeDiagram(liste, targetid) {
 
     id = "#" + targetid;
+    d3.select(id).selectAll("*").remove();
 
     //console.log(liste)
     // set the dimensions and margins of the graph
@@ -263,14 +263,15 @@ function zeigeDiagram(liste, targetid) {
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
+
     // Scale the range of the data in the domains
     x.domain(liste.map(function (d) { return d.key; }));
     y.domain([0, d3.max(liste, function (d) { return d.val; })]);
 
     // append the rectangles for the bar chart
-    svg.selectAll(".bar")
-        .data(liste)
-        .enter().append("rect")
+    var bars =  svg.selectAll(".bar").data(liste);
+   
+        bars.enter().append("rect")
         .attr("class", "bar")
         .attr("x", function (d) { return x(d.key); })
 
@@ -278,6 +279,9 @@ function zeigeDiagram(liste, targetid) {
         .attr("y", function (d) { return y(d.val); })
         .attr("height", function (d) { return height - y(d.val); });
 
+    bars.exit().remove();
+    
+    
     //
     var balkenText = svg.selectAll(".balkentext").data(liste);
 
@@ -305,7 +309,6 @@ function zeigeDiagram(liste, targetid) {
         .call(d3.axisLeft(y));
 
 
-
 }
 
 function mapModule(listeModul, listeGlobal) {
@@ -322,7 +325,7 @@ function mapModule(listeModul, listeGlobal) {
 function aktualisiereListe(listeModul, targetID, einheit) {
 
     id = "#" + targetID;
-
+    d3.select(id).selectAll("*").remove();
     //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
     let d = d3.select(id).selectAll("li").data(listeModul);
     //console.log(d)
@@ -345,7 +348,7 @@ function aktualisiereListe(listeModul, targetID, einheit) {
 
 function aktualisiereAmpel(listeModul, targetID, gesamtAmpelZyklen) {
     id = "#" + targetID;
-
+    d3.select(id).selectAll("*").remove();
     //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
     let d = d3.select(id).selectAll("p").data(listeModul);
 
