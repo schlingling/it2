@@ -21,7 +21,7 @@ function preprocess_rawData(rawData, error) {
     let valueToComulate = ["H-vertikal", "H-horizontal", "V-vertikal", "V-drehen", "V-horizontal"];
     let valueForAmpel = ["Ampel rot", "Ampel orange", "Ampel gruen", "Ampel weiss"];
 
-    let valueOfenBearbeitung = ["B-Motor Drehkranz im Uhrzeigersinn", "B-Motor Drehkranz gegen Uhrzeigersinn",];
+    let valueOfenBearbeitung = ["B-Motor Drehkranz im Uhrzeigersinn", "B-Motor Drehkranz gegen Uhrzeigersinn"];
     let valueOfenRausRein = ["B-Motor Ofenschieber Einfahren", "B-Motor Ofenschieber Ausfahren"];
 
 
@@ -131,7 +131,13 @@ function preprocess_rawData(rawData, error) {
     listeSortierstationFi = ["S-Lichtschranke Eingang", "S-Lichtschranke nach Farbsensor", "S-Lichtschranke weiss", "S-Lichtschranke rot", "S-Lichtschranke blau"]
     //kumulierte wegstrecke
     listeComulateHochregallager = ["H-vertikal", "H-horizontal"];
-    listeComulateVerteilstation = ["V-vertikal", "V-drehen", "V-horizontal"];
+    listeComulateVerteilstation = ["V-vertikal", "V-horizontal"];
+    listeUmdrehungenVerteilstation = ["V-drehen"];
+
+    listeOfenBearbeitung = ["B-Motor Drehkranz Bearbeitung imgegen Uhrzeigersinn"];
+    listeOfenRausRein = ["B-Motor Ofenschieber RausRein"];
+    listeToCountOnTimeBearbeitungsstation = ["B-Motor Saege", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Motor Foerderband vorwaerts"]; // Bearbeitungsstation motoren sowie fliessbaender
+    listeToCountOnTimeSortierstation = ["S-Motor Foerderband"];
 
     //Listen von Modul Festo
     listeFesto = ["Umsetzer Endanschlag 1 (3B1)", "Umsetzer Endanschlag 2 (3B2)"]
@@ -158,7 +164,17 @@ function preprocess_rawData(rawData, error) {
     zeigeDiagram(mapSortierstationFi, "sortierstationG");
     
     //console.log(bereinigte_cumulatedValueOverTime)
-    aktualisiereListeComulate(bereinigte_cumulatedValueOverTime, "hochregallager_comulate")
+    //teile die sensoren nach modulen auf
+    let mapHochregalWegstrecken = mapModule(listeComulateHochregallager, bereinigte_cumulatedValueOverTime);
+    let mapVerteilstationWegstrecken = mapModule(listeComulateVerteilstation,bereinigte_cumulatedValueOverTime);
+    let mapVerteilstationUmdrehungen = mapModule(listeUmdrehungenVerteilstation, bereinigte_cumulatedValueOverTime);
+
+    //console.log(bereinigte_cumulatedValueOverTime)
+    //console.log(mapHochregalWegstrecken)
+    //aktualisiere textuelle anzeige der kumulierten wegstrecken und umdrehungen
+    aktualisiereListeComulate(mapHochregalWegstrecken, "hochregallager_comulate", "cm")
+    aktualisiereListeComulate(mapVerteilstationWegstrecken, "verteilstation_comulate", "cm")
+    aktualisiereListeComulate(mapVerteilstationUmdrehungen, "verteilstation_umdrehungen_schwenkarm", "Umdrehungen")
     
     //Ampel
     let mapAmpelrot = mapModule(listeAmpelrot, liste);
@@ -173,7 +189,7 @@ function preprocess_rawData(rawData, error) {
     aktualisiereAmpel(mapAmpelweiss, "lightwhite", gesamtAmpelZyklen);
 }
 
-function aktualisiereListeComulate(listeModul, targetID) {
+function aktualisiereListeComulate(listeModul, targetID, einheit) {
 
     id = "#" + targetID;
     //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
@@ -184,7 +200,7 @@ function aktualisiereListeComulate(listeModul, targetID) {
     //geschieht hier für jede Zeile von daten.
     d.enter().append("li")
         .text(function (listeModul) {
-            return listeModul.name + ": " + listeModul.werte[listeModul.werte.length - 1].wert + " cm";
+            return listeModul.name + ": " + listeModul.werte[listeModul.werte.length - 1].wert + " " + einheit;
         });
     //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
     d.exit().remove();
@@ -279,7 +295,7 @@ function zeigeDiagram(liste, targetid) {
 
 function mapModule(listeModul, listeGlobal) {
     let filteredListe = listeGlobal.map(function (d) {
-        if (listeModul.includes(d.key)) {
+        if (listeModul.includes(d.key) || listeModul.includes(d.name)) { //name war noetig weil ich in der zweiten liste comulate name statt key verwendet habe...
             return (d);
         }
     }).filter(function (x) {
