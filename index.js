@@ -139,8 +139,9 @@ function preprocess_rawData(rawData, error) {
     listeComulateVerteilstation = ["V-vertikal", "V-horizontal"];
     listeUmdrehungenVerteilstation = ["V-drehen"];
 
-    //Motorenlaufzeit
     listeOfenBearbeitungUndRausRein = ["B-Motor Drehkranz Bearbeitung", "B-Motor Ofenschieber RausRein"];
+   
+    //Motorenlaufzeit
     listeToCountOnTimeBearbeitungsstation = ["B-Motor Saege", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Motor Foerderband vorwaerts"]; // Bearbeitungsstation motoren sowie fliessbaender
     listeToCountOnTimeSortierstation = ["S-Motor Foerderband"];
 
@@ -173,7 +174,7 @@ function preprocess_rawData(rawData, error) {
     let mapHochregalWegstrecken = mapModule(listeComulateHochregallager, bereinigte_cumulatedValueOverTime);
     let mapVerteilstationWegstrecken = mapModule(listeComulateVerteilstation,bereinigte_cumulatedValueOverTime);
     let mapVerteilstationUmdrehungen = mapModule(listeUmdrehungenVerteilstation, bereinigte_cumulatedValueOverTime);
-    let mapOfenBearbeitungUndRausReinWegstrecke = mapModule(listeOfenBearbeitung, liste);
+    let mapOfenBearbeitungUndRausReinWegstrecke = mapModule(listeOfenBearbeitungUndRausRein, liste);
 
     //console.log(bereinigte_cumulatedValueOverTime)
     //console.log(mapHochregalWegstrecken)
@@ -184,8 +185,9 @@ function preprocess_rawData(rawData, error) {
     aktualisiereListe(mapOfenBearbeitungUndRausReinWegstrecke, "bearbeitungsstation_cumulate", " cm")
     
     //motorenlaufzeit
-
+    let mapBearbeitungsstationMotorenlaufzeit = mapModule(listeToCountOnTimeBearbeitungsstation, liste);
     //anzeige der motorenlaufzeiten
+    aktualisiereListe(mapBearbeitungsstationMotorenlaufzeit, "bearbeitungsstation_motorenlaufzeit", " sek")
 
     //Ampel
     let mapAmpelrot = mapModule(listeAmpelrot, liste);
