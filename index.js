@@ -238,6 +238,15 @@ function bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, nameDe
 
 function zeigeDiagram(liste, targetid) {
 
+    console.log(liste)
+    liste = liste.filter(function(x){
+
+        if (x.val == 0){
+            return false;
+        }
+        return true;
+    });
+    console.log(liste)
     id = "#" + targetid;
     d3.select(id).selectAll("*").remove();
 
@@ -250,10 +259,10 @@ function zeigeDiagram(liste, targetid) {
     // set the ranges
     var x = d3.scaleBand()
         .range([0, width])
-        .padding(0.1);
+        .padding(0.7);
     var y = d3.scaleLinear()
         .range([height, 0]);
-    var xachsenwerte = d3.scaleBand().range([0, width]).padding(0.4)
+    var xachsenwerte = d3.scaleBand().range([0, width]).padding(0.5)
 
 
     let svg = d3.select(id).append("svg")//Auf Webseite
@@ -277,7 +286,8 @@ function zeigeDiagram(liste, targetid) {
 
         .attr("width", 12)//x.bandwidth()
         .attr("y", function (d) { return y(d.val); })
-        .attr("height", function (d) { return height - y(d.val); });
+        .attr("height", function (d) { return height - y(d.val); })
+        .style("fill", "rgb(189, 189, 189)");
 
     bars.exit().remove();
     
@@ -287,14 +297,14 @@ function zeigeDiagram(liste, targetid) {
 
     balkenText.enter().append("text")
         .attr("class", "balkentext")
-        .attr("x", -200)
+        .attr("x", -250)
         .attr("y", function (d) { return x(d.key); })
         .text(function (d) { return d.key; })
 
         .attr("transform", "rotate(-90)")
         .attr("font-family", "sans-serif")
-        .attr("font-size", "10px")
-        .attr("fill", "black");
+        .attr("font-size", "12px")
+        
 
 
     balkenText.exit().remove();
