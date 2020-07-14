@@ -10,23 +10,41 @@ function preprocess_rawData(rawData, error) {
     let valueToComulate = ["H-vertikal", "H-horizontal", "V-vertikal", "V-drehen", "V-horizontal"];
     let valueForAmpel = ["Ampel rot", "Ampel orange", "Ampel gruen", "Ampel weiss"]
 
-    let countTaster = {};
+    let countdictionary = {};
     if (error) {
         console.log(error);
     } else {
         i = 0;
+        console.log(rawData)
+
+        let cumulatedDistanceOverTime; //dictionary mit key: name des sensors val: wiederum dictionary mit datum: .... wert: kumulierte wegstrecke bis dahin
+        
+        cumulatedDistanceOverTime = valueToComulate.map(function (key) { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
+            return {
+                name: key,
+                werte: rawData[0].map(function (data) {
+                    return { datum: data.datum, wert: parseFloatAusStringMitKomma(data.werte[key]) };
+                })
+            }
+        });
+
+        console.log(cumulatedDistanceOverTime);
+
+
+        // addiere alle Anzahl der Statusänderungen sowie kumuliere alle wegstrecken um pro sensor ein 
+        // key: name des sensors val: wert am ende der zeiteinheit (in Anzahl Statusänderungen oder kumulierte wegstrecke in cm) zu erhalten 
         rawData[0].forEach(zeitpunkt => {
             for (const [key, val] of Object.entries(zeitpunkt.werte)) {
 
-                if (!countTaster.hasOwnProperty(key)) {
+                if (!countdictionary.hasOwnProperty(key)) {
                     if (val == " true") {
-                        countTaster[key] = 1
+                        countdictionary[key] = 1
 
                     } else if (val == " false") {
-                        countTaster[key] = 0
+                        countdictionary[key] = 0
 
                     } else if (valueToComulate.includes(key)) {
-                        countTaster[key] = 1 //need to be set to one, da mit 0 sonst nicht initialisiert 
+                        countdictionary[key] = 1 //need to be set to one, da mit 0 sonst nicht initialisiert 
 
                     }
 
@@ -35,15 +53,15 @@ function preprocess_rawData(rawData, error) {
                     //console.log(valueToComulate.includes(key))
                     if (valueForAmpel.includes(key)) {
                         if (val == " true") {
-                            countTaster[key] += 1;
+                            countdictionary[key] += 1;
                         }
 
                     } else if (valueToComulate.includes(key) && (rawData[0][i - 1].werte[key] != val)) {
                         //countTaster
                         // console.log(val)
-                        countTaster[key] += parseInt(val, 10)
+                        countdictionary[key] += parseInt(val, 10)
                     } else if ((rawData[0][i - 1].werte[key]) != val) {
-                        countTaster[key] += 1
+                        countdictionary[key] += 1
                     }
                 }
             }
@@ -52,7 +70,7 @@ function preprocess_rawData(rawData, error) {
 
 
     }
-    // console.log(countTaster),
+
     liste = [];
 
     //Liste Ampel
@@ -66,14 +84,14 @@ function preprocess_rawData(rawData, error) {
     listeVerteilstationFi = ["V-Referenzschalter vertikal", "V-Referenzschalter horizontal", "V-Referenzschalter drehen"]
     listeBearbeitungsstationFi = ["B-Motor Drehkranz im Uhrzeigersinn", "B-Motor Drehkranz gegen Uhrzeigersinn", "B-Motor Foerderband vorwaerts", "B-Motor Saege", "B-Motor Ofenschieber Einfahren", "B-Motor Ofenschieber Ausfahren", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Leuchte Ofen", "B-Referenzschalter Drehkranz (Pos. Sauger)", "B-Referenzschalter Drehkranz (Pos. Foerderband)", "B-Lichtschranke Ende Foerderband", "B-Referenzschalter Drehkranz (Pos. Saege)", "B-Referenzschalter Sauger (Pos. Drehkranz)", "B-Referenzschalter Ofenschieber Innen", "B-Referenzschalter Ofenschieber Aussen", "B-Referenzschalter Sauger (Pos. Brennofen)", "B-Lichtschranke Brennofen"]
     listeSortierstationFi = ["S-Lichtschranke Eingang", "S-Lichtschranke nach Farbsensor", "S-Lichtschranke weiss", "S-Lichtschranke rot", "S-Lichtschranke blau", "S-Motor Foerderband"]
-    listeComulateHochregallager = ["H-vertikal", "H-horizontal"]; 
-    listeComulateVerteilstation = ["V-vertikal", "V-drehen", "V-horizontal"]; 
-   
+    listeComulateHochregallager = ["H-vertikal", "H-horizontal"];
+    listeComulateVerteilstation = ["V-vertikal", "V-drehen", "V-horizontal"];
+
 
     //Listen von Modul Festo
     listeFesto = ["Umsetzer Endanschlag 1 (3B1)", "Umsetzer Endanschlag 2 (3B2)"]
 
-    for (const [key, val] of Object.entries(countTaster)) {
+    for (const [key, val] of Object.entries(countdictionary)) {
         liste.push({ key, val })
     }
 
@@ -131,7 +149,7 @@ function zeigeDiagram(liste, targetid) {
         .padding(0.1);
     var y = d3.scaleLinear()
         .range([height, 0]);
-    var xachsenwerte = d3.scaleBand().range ([0, width]).padding(0.4)
+    var xachsenwerte = d3.scaleBand().range([0, width]).padding(0.4)
 
 
     let svg = d3.select(id).append("svg")//Auf Webseite
@@ -164,7 +182,7 @@ function zeigeDiagram(liste, targetid) {
         .attr("x", -200)
         .attr("y", function (d) { return x(d.key); })
         .text(function (d) { return d.key; })
-        
+
         .attr("transform", "rotate(-90)")
         .attr("font-family", "sans-serif")
         .attr("font-size", "10px")
