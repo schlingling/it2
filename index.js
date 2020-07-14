@@ -17,18 +17,26 @@ function preprocess_rawData(rawData, error) {
         i = 0;
         console.log(rawData)
 
-        let cumulatedDistanceOverTime; //dictionary mit key: name des sensors val: wiederum dictionary mit datum: .... wert: kumulierte wegstrecke bis dahin
-        
-        cumulatedDistanceOverTime = valueToComulate.map(function (key) { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
+        //cumulatedDistanceOverTime ist ein dictionary mit key: name des sensors val: wiederum dictionary mit datum: .... wert: kumulierte wegstrecke bis dahin
+        let cumulatedDistanceOverTime = valueToComulate.map(function (key) { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
+            let currentValue = 0;// variable zum zwischenspeicher der bisherigen kumulierten wegstrecke für diesen key
             return {
                 name: key,
                 werte: rawData[0].map(function (data) {
-                    return { datum: data.datum, wert: parseFloatAusStringMitKomma(data.werte[key]) };
+                    currentValue += parseInt(data.werte[key]);
+                    return { datum: data.datum, wert: currentValue};
                 })
             }
         });
 
-        console.log(cumulatedDistanceOverTime);
+        let bereinigte_cumulatedDistanceOverTime = bereinigeKumulierteWegstreckenachCM(cumulatedDistanceOverTime, "H-horizontal", 78,6)
+        bereinigte_cumulatedDistanceOverTime = bereinigeKumulierteWegstreckenachCM( bereinigte_cumulatedDistanceOverTime, "H-vertikal", 78,8)
+        bereinigte_cumulatedDistanceOverTime = bereinigeKumulierteWegstreckenachCM( bereinigte_cumulatedDistanceOverTime, "V-vertikal", 78,2)
+        bereinigte_cumulatedDistanceOverTime = bereinigeKumulierteWegstreckenachCM( bereinigte_cumulatedDistanceOverTime, "V-drehen", 78,2)
+        
+
+        console.log(cumulatedDistanceOverTime)
+        console.log(bereinigte_cumulatedDistanceOverTime);
 
 
         // addiere alle Anzahl der Statusänderungen sowie kumuliere alle wegstrecken um pro sensor ein 
@@ -132,6 +140,22 @@ function preprocess_rawData(rawData, error) {
 
 }
 
+//beste funktion
+function bereinigeKumulierteWegstreckenachCM(cumulatedDistanceOverTime, nameDesSensors, teiler){
+    bereinigte_CumulatedDistanceOverTime = cumulatedDistanceOverTime.map(function(datarow){
+        if(datarow.name == nameDesSensors){
+            return {
+                name: datarow.name,
+                werte: datarow.werte.map(function(data){
+                    return { datum: data.datum, wert: (parseInt(data.wert) / teiler).toFixed(1)};// rundet auf eine nachkommastelle den neuen wert genau
+                })
+            }
+        } else {
+            return datarow;
+        }
+    });
+    return bereinigte_CumulatedDistanceOverTime;
+}
 
 function zeigeDiagram(liste, targetid) {
 
