@@ -1,5 +1,5 @@
 function initialisiere() {
-
+    
     // Data Picker Initialization
     let rawData = []
     rawData.push(d3.json("https://it2wi1.if-lab.de/rest/ft_ablauf"));
@@ -7,11 +7,11 @@ function initialisiere() {
         console.log(error);
     });
 
-
+    
 }
 
 function aktualisiereSeite(data) {
-    preprocess_rawData([data]);
+    preprocess_rawData([data]); 
 }
 
 
@@ -64,8 +64,8 @@ function preprocess_rawData(rawData, error) {
                 if (valueOfenRausRein.includes(key)) {
                     if (val == " true") {
                         countdictionary["B-Motor Ofenschieber RausRein"] = 5; //in CM
-
-                    } else if (val == " false") {
+                       
+                    } else if (val == " false"){
                         countdictionary["B-Motor Ofenschieber RausRein"] = 0;
                     }
                     countdictionary["B-Motor Ofenschieber Einfahren"] = -1; //verwendet um initialisierung der neuen variable raus rein anzuzeigen
@@ -73,7 +73,7 @@ function preprocess_rawData(rawData, error) {
                 } else if (valueOfenBearbeitung.includes(key)) {
                     if (val == " true") {
                         countdictionary["B-Motor Drehkranz Bearbeitung"] = 19.1; //in CM
-                    } else if (val == " false") {
+                    } else if (val == " false"){
                         countdictionary["B-Motor Drehkranz Bearbeitung"] = 0;
                     }
                     countdictionary["B-Motor Drehkranz im Uhrzeigersinn"] = -1;//verwendet um initialisierung der neuen variable raus rein anzuzeigen
@@ -138,7 +138,7 @@ function preprocess_rawData(rawData, error) {
     listeUmdrehungenVerteilstation = ["V-drehen"];
 
     listeOfenBearbeitungUndRausRein = ["B-Motor Drehkranz Bearbeitung", "B-Motor Ofenschieber RausRein"];
-
+   
     //Motorenlaufzeit
     listeToCountOnTimeBearbeitungsstation = ["B-Motor Saege", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Motor Foerderband vorwaerts"]; // Bearbeitungsstation motoren sowie fliessbaender
     listeToCountOnTimeSortierstation = ["S-Motor Foerderband"];
@@ -155,7 +155,7 @@ function preprocess_rawData(rawData, error) {
     let mapBearbeitungsstationFi = mapModule(listeBearbeitungsstationFi, liste);
     let mapSortierstationFi = mapModule(listeSortierstationFi, liste);
     let mapFesto = mapModule(listeFesto, liste);//Festo
-
+    
     //textuelleaenderungen  anzeigen
     aktualisiereListe(mapHochregalFi, "hochregallager");
     aktualisiereListe(mapVerteilstationFi, "verteilstation");
@@ -166,11 +166,11 @@ function preprocess_rawData(rawData, error) {
     zeigeDiagram(mapVerteilstationFi, "verteilstationG");
     zeigeDiagram(mapBearbeitungsstationFi, "bearbeitungsstationG");
     zeigeDiagram(mapSortierstationFi, "sortierstationG");
-
+    
     //console.log(bereinigte_cumulatedValueOverTime)
     //kumulierte wegstrecken und umdrehungen teile die sensoren nach modulen auf
     let mapHochregalWegstrecken = mapModule(listeComulateHochregallager, bereinigte_cumulatedValueOverTime);
-    let mapVerteilstationWegstrecken = mapModule(listeComulateVerteilstation, bereinigte_cumulatedValueOverTime);
+    let mapVerteilstationWegstrecken = mapModule(listeComulateVerteilstation,bereinigte_cumulatedValueOverTime);
     let mapVerteilstationUmdrehungen = mapModule(listeUmdrehungenVerteilstation, bereinigte_cumulatedValueOverTime);
     let mapOfenBearbeitungUndRausReinWegstrecke = mapModule(listeOfenBearbeitungUndRausRein, liste);
 
@@ -181,10 +181,7 @@ function preprocess_rawData(rawData, error) {
     aktualisiereListeComulate(mapVerteilstationWegstrecken, "verteilstation_comulate", "cm")
     aktualisiereListeComulate(mapVerteilstationUmdrehungen, "verteilstation_umdrehungen_schwenkarm", "Umdrehungen")
     aktualisiereListe(mapOfenBearbeitungUndRausReinWegstrecke, "bearbeitungsstation_cumulate", " cm")
-
-    // Graph der Kumulierten Wegstrecke Schwenkarm
-    //TODO
-
+    
     //motorenlaufzeit
     let mapBearbeitungsstationMotorenlaufzeit = mapModule(listeToCountOnTimeBearbeitungsstation, liste);
     let mapSortierstationMotorenlaufzeit = mapModule(listeToCountOnTimeSortierstation, liste);
@@ -281,9 +278,9 @@ function zeigeDiagram(liste, targetid) {
     y.domain([0, d3.max(liste, function (d) { return d.val; })]);
 
     // append the rectangles for the bar chart
-    var bars = svg.selectAll(".bar").data(liste);
-
-    bars.enter().append("rect")
+    var bars =  svg.selectAll(".bar").data(liste);
+   
+        bars.enter().append("rect")
         .attr("class", "bar")
         .attr("x", function (d) { return x(d.key); })
 
@@ -293,8 +290,8 @@ function zeigeDiagram(liste, targetid) {
         .style("fill", "rgb(189, 189, 189)");
 
     bars.exit().remove();
-
-
+    
+    
     //
     var balkenText = svg.selectAll(".balkentext").data(liste);
 
@@ -322,6 +319,40 @@ function zeigeDiagram(liste, targetid) {
         .call(d3.axisLeft(y));
 
 
+}
+
+function mapModule(listeModul, listeGlobal) {
+    let filteredListe = listeGlobal.map(function (d) {
+        if (listeModul.includes(d.key) || listeModul.includes(d.name)) { //name war noetig weil ich in der zweiten liste comulate name statt key verwendet habe...
+            return (d);
+        }
+    }).filter(function (x) {
+        return x !== undefined;
+    });
+    return filteredListe;
+}
+
+function aktualisiereListe(listeModul, targetID, einheit) {
+
+    id = "#" + targetID;
+    d3.select(id).selectAll("*").remove();
+    //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
+    let d = d3.select(id).selectAll("li").data(listeModul);
+    //console.log(d)
+    //console.log(countTaster)
+    //.enter().append(): Daten hinzufuegen falls es mehr Daten als Elemente im HTML gibt.
+    //geschieht hier für jede Zeile von daten.
+    d.enter().append("li")
+        .text(function (listeModul) {
+            if(einheit == undefined){
+                return listeModul.key + ": " + listeModul.val;
+            } else {
+                return listeModul.key + ": " + listeModul.val + einheit;
+            }
+        });
+    //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
+    d.exit().remove();
+    //console.log(countTaster[0])
 }
 
 
