@@ -71,9 +71,9 @@ function preprocess_rawData(rawData, error) {
                     }
                 } else if (valueOfenBearbeitung.includes(key)) {
                     if (val == " true") {
-                        countdictionary["B-Motor Drehkranz Bearbeitung imgegen Uhrzeigersinn"] = 19, 1; //in CM
+                        countdictionary["B-Motor Drehkranz Bearbeitung"] = 19, 1; //in CM
                     } else {
-                        countdictionary["B-Motor Drehkranz Bearbeitung imgegen Uhrzeigersinn"] = 0;
+                        countdictionary["B-Motor Drehkranz Bearbeitung"] = 0;
                     }
 
                 } else if (valueToCountOnTime.includes(key)) {
@@ -100,7 +100,7 @@ function preprocess_rawData(rawData, error) {
                     }
                 } else if (valueOfenBearbeitung.includes(key)) {// Ofen Bearbeitung
                     if (val == " true") {
-                        countdictionary["B-Motor Drehkranz Bearbeitung imgegen Uhrzeigersinn"] += 19, 1;// in CM
+                        countdictionary["B-Motor Drehkranz Bearbeitung"] += 19;// in CM
                     }
                 } else if (valueToCountOnTime.includes(key)) {
                     if (val == " true") {
@@ -134,7 +134,8 @@ function preprocess_rawData(rawData, error) {
     listeComulateVerteilstation = ["V-vertikal", "V-horizontal"];
     listeUmdrehungenVerteilstation = ["V-drehen"];
 
-    listeOfenBearbeitung = ["B-Motor Drehkranz Bearbeitung imgegen Uhrzeigersinn"];
+    //Motorenlaufzeit
+    listeOfenBearbeitung = ["B-Motor Drehkranz Bearbeitung"];
     listeOfenRausRein = ["B-Motor Ofenschieber RausRein"];
     listeToCountOnTimeBearbeitungsstation = ["B-Motor Saege", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Motor Foerderband vorwaerts"]; // Bearbeitungsstation motoren sowie fliessbaender
     listeToCountOnTimeSortierstation = ["S-Motor Foerderband"];
@@ -164,7 +165,7 @@ function preprocess_rawData(rawData, error) {
     zeigeDiagram(mapSortierstationFi, "sortierstationG");
     
     //console.log(bereinigte_cumulatedValueOverTime)
-    //teile die sensoren nach modulen auf
+    //kumulierte wegstrecken und umdrehungen teile die sensoren nach modulen auf
     let mapHochregalWegstrecken = mapModule(listeComulateHochregallager, bereinigte_cumulatedValueOverTime);
     let mapVerteilstationWegstrecken = mapModule(listeComulateVerteilstation,bereinigte_cumulatedValueOverTime);
     let mapVerteilstationUmdrehungen = mapModule(listeUmdrehungenVerteilstation, bereinigte_cumulatedValueOverTime);
@@ -176,6 +177,12 @@ function preprocess_rawData(rawData, error) {
     aktualisiereListeComulate(mapVerteilstationWegstrecken, "verteilstation_comulate", "cm")
     aktualisiereListeComulate(mapVerteilstationUmdrehungen, "verteilstation_umdrehungen_schwenkarm", "Umdrehungen")
     
+    //motorenlaufzeit
+    let mapOfenBearbeitungMotorenlaufzeit = mapModule(listeOfenBearbeitung, liste);
+
+    //anzeige der motorenlaufzeiten
+    aktualisiereListe(mapOfenBearbeitungMotorenlaufzeit, "bearbeitungsstation_cumulate", " sek")
+
     //Ampel
     let mapAmpelrot = mapModule(listeAmpelrot, liste);
     let mapAmpelorange = mapModule(listeAmpelorange, liste);
@@ -304,7 +311,7 @@ function mapModule(listeModul, listeGlobal) {
     return filteredListe;
 }
 
-function aktualisiereListe(listeModul, targetID) {
+function aktualisiereListe(listeModul, targetID, einheit) {
 
     id = "#" + targetID;
 
@@ -316,7 +323,11 @@ function aktualisiereListe(listeModul, targetID) {
     //geschieht hier für jede Zeile von daten.
     d.enter().append("li")
         .text(function (listeModul) {
-            return listeModul.key + ": " + listeModul.val;
+            if(einheit == undefined){
+                return listeModul.key + ": " + listeModul.val;
+            } else {
+                return listeModul.key + ": " + listeModul.val + einheit;
+            }
         });
     //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
     d.exit().remove();
