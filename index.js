@@ -8,17 +8,22 @@ function initialisiere() {
 
 function preprocess_rawData(rawData, error) {
     let valueToComulate = ["H-vertikal", "H-horizontal", "V-vertikal", "V-drehen", "V-horizontal"];
-    let valueForAmpel = ["Ampel rot", "Ampel orange", "Ampel gruen", "Ampel weiss"]
+    let valueForAmpel = ["Ampel rot", "Ampel orange", "Ampel gruen", "Ampel weiss"];
+
+    let valueOfenBearbeitung;
+    let valueOfenRausRein = ["B-Motor Ofenschieber Einfahren", "B-Motor Ofenschieber Ausfahren"];
+
+    let valueToCountOnTime = [ ]; // Bearbeitungsstation motoren sowie fliessbaender
 
     let countdictionary = {};
     if (error) {
         console.log(error);
     } else {
         i = 0;
-        console.log(rawData)
+        //console.log(rawData)
 
         //cumulatedDistanceOverTime ist ein dictionary mit key: name des sensors val: wiederum dictionary mit datum: .... wert: kumulierte wegstrecke bis dahin
-        let cumulatedDistanceOverTime = valueToComulate.map(function (key) { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
+        let cumulatedValueOverTime = valueToComulate.map(function (key) { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
             let currentValue = 0;// variable zum zwischenspeicher der bisherigen kumulierten wegstrecke für diesen key
             return {
                 name: key,
@@ -29,14 +34,15 @@ function preprocess_rawData(rawData, error) {
             }
         });
 
-        let bereinigte_cumulatedDistanceOverTime = bereinigeKumulierteWegstreckenachCM(cumulatedDistanceOverTime, "H-horizontal", 78,6)
-        bereinigte_cumulatedDistanceOverTime = bereinigeKumulierteWegstreckenachCM( bereinigte_cumulatedDistanceOverTime, "H-vertikal", 78,8)
-        bereinigte_cumulatedDistanceOverTime = bereinigeKumulierteWegstreckenachCM( bereinigte_cumulatedDistanceOverTime, "V-vertikal", 78,2)
-        bereinigte_cumulatedDistanceOverTime = bereinigeKumulierteWegstreckenachCM( bereinigte_cumulatedDistanceOverTime, "V-drehen", 78,2)
+        let bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, "H-horizontal", 78,6) // in cm// dict, name des sensors, teiler (1cm entspricht teiler), einheit
+        bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit( bereinigte_cumulatedValueOverTime, "H-vertikal", 78,8) // in cm
+        bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit( bereinigte_cumulatedValueOverTime, "V-vertikal", 78,2) // in cm
+        bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit( bereinigte_cumulatedValueOverTime, "V-drehen", 2264) // in Anzahl Umdrehungen
+        bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit( bereinigte_cumulatedValueOverTime, "V-horizontal", 67) // in Anzahl Umdrehungen
         
 
-        console.log(cumulatedDistanceOverTime)
-        console.log(bereinigte_cumulatedDistanceOverTime);
+        //console.log(cumulatedValueOverTime)
+        //console.log(bereinigte_cumulatedValueOverTime);
 
 
         // addiere alle Anzahl der Statusänderungen sowie kumuliere alle wegstrecken um pro sensor ein 
@@ -44,16 +50,18 @@ function preprocess_rawData(rawData, error) {
         rawData[0].forEach(zeitpunkt => {
             for (const [key, val] of Object.entries(zeitpunkt.werte)) {
 
-                if (!countdictionary.hasOwnProperty(key)) {
+                if (!countdictionary.hasOwnProperty(key)) {//Initialisierung
                     if (val == " true") {
                         countdictionary[key] = 1
 
                     } else if (val == " false") {
                         countdictionary[key] = 0
 
-                    } else if (valueToComulate.includes(key)) {
-                        countdictionary[key] = 1 //need to be set to one, da mit 0 sonst nicht initialisiert 
+                    } else if (valueToComulate.includes(key)) { //int wert zum kumulieren
+                        countdictionary[key] = 0 //need to be set to one, da mit 0 sonst nicht initialisiert 
 
+                    } else if(valueOfenRausRein.includes(key)){
+                        countdictionary["B-Motor Ofenschieber RausRein"]
                     }
 
                 } else {
@@ -90,7 +98,7 @@ function preprocess_rawData(rawData, error) {
     //Listen von Modul Fischertechnik
     listeHochregalFi = ["Referenztaster horizontal", "Referenztaster vertikal", "Referenztaster Ausleger vorne", "Referenztaster Ausleger hinten", "Lichtschranke innen", "Lichtschranke aussen"];
     listeVerteilstationFi = ["V-Referenzschalter vertikal", "V-Referenzschalter horizontal", "V-Referenzschalter drehen"]
-    listeBearbeitungsstationFi = ["B-Motor Drehkranz im Uhrzeigersinn", "B-Motor Drehkranz gegen Uhrzeigersinn", "B-Motor Foerderband vorwaerts", "B-Motor Saege", "B-Motor Ofenschieber Einfahren", "B-Motor Ofenschieber Ausfahren", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Leuchte Ofen", "B-Referenzschalter Drehkranz (Pos. Sauger)", "B-Referenzschalter Drehkranz (Pos. Foerderband)", "B-Lichtschranke Ende Foerderband", "B-Referenzschalter Drehkranz (Pos. Saege)", "B-Referenzschalter Sauger (Pos. Drehkranz)", "B-Referenzschalter Ofenschieber Innen", "B-Referenzschalter Ofenschieber Aussen", "B-Referenzschalter Sauger (Pos. Brennofen)", "B-Lichtschranke Brennofen"]
+    listeBearbeitungsstationFi = ["B-Motor Drehkranz im Uhrzeigersinn", "B-Motor Drehkranz gegen Uhrzeigersinn", "B-Motor Foerderband vorwaerts", "B-Motor Saege", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Leuchte Ofen", "B-Referenzschalter Drehkranz (Pos. Sauger)", "B-Referenzschalter Drehkranz (Pos. Foerderband)", "B-Lichtschranke Ende Foerderband", "B-Referenzschalter Drehkranz (Pos. Saege)", "B-Referenzschalter Sauger (Pos. Drehkranz)", "B-Referenzschalter Ofenschieber Innen", "B-Referenzschalter Ofenschieber Aussen", "B-Referenzschalter Sauger (Pos. Brennofen)", "B-Lichtschranke Brennofen"]
     listeSortierstationFi = ["S-Lichtschranke Eingang", "S-Lichtschranke nach Farbsensor", "S-Lichtschranke weiss", "S-Lichtschranke rot", "S-Lichtschranke blau", "S-Motor Foerderband"]
     listeComulateHochregallager = ["H-vertikal", "H-horizontal"];
     listeComulateVerteilstation = ["V-vertikal", "V-drehen", "V-horizontal"];
@@ -141,7 +149,7 @@ function preprocess_rawData(rawData, error) {
 }
 
 //beste funktion
-function bereinigeKumulierteWegstreckenachCM(cumulatedDistanceOverTime, nameDesSensors, teiler){
+function bereinigeKumulierteWegstreckenachEinheit(cumulatedDistanceOverTime, nameDesSensors, teiler){
     bereinigte_CumulatedDistanceOverTime = cumulatedDistanceOverTime.map(function(datarow){
         if(datarow.name == nameDesSensors){
             return {
