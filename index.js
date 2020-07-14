@@ -334,4 +334,127 @@ function aktualisiereAmpel(listeModul, targetID, gesamtAmpelZyklen) {
 }
 
 
+function zeigeLinePlot(sensordaten) {
 
+    let width;
+    let heigh;
+    let margin;
+    let zeichenflaeche;
+    let x;
+    let y;
+    let farben;
+    let linienFunktion;
+    let parseTime = d3.timeParse("%d.%m.%Y %H:%M:%S");
+
+    //Inhalt
+    svg = d3.select("#content").append("svg")//Auf Webseite
+        .attr("width", 1000)
+        .attr("height", 400)
+        .style("background-color", "white");//Dadurch ist der SVG-Bereich erkennbar
+
+    //Statische Felder
+    svg = d3.select("svg");
+    margin = { top: 20, right: 80, bottom: 30, left: 50 };
+    width = svg.attr("width") - margin.left - margin.right;
+    height = svg.attr("height") - margin.top - margin.bottom;
+    zeichenflaeche = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    //Definition der Achstypen und Größe
+    x = d3.scaleTime().range([0, width]);
+    y = d3.scaleLinear().range([height, 0]);
+    farben = d3.scaleOrdinal(d3.schemeCategory10); //andere Beispiele: schemePastel2, schemeSet1  
+
+    //Linienfunktion
+    linienFunktion = d3.line()
+        .curve(d3.curveLinear) //andere Beispiele: curveBasis, curveStep, curveNatural
+        .x(function (d) {
+            return x(parseTime(d.datum));//X-Koordinate
+        })
+        .y(function (d) {
+            return y(d.wert);//Y-Koordinate
+        });
+
+
+
+        let amSchwersten;
+
+    //Wertebereich X-Achse
+    x.domain(d3.extent(personenDaten[0].werte, function (personenWert) {
+        return parseTime(personenWert.datum);
+    }));
+
+    //Wertebereich Y-Achse
+    let minimum = d3.min(personenDaten, function (person) {
+        return d3.min(person.werte, function (personenWerte) {
+            return personenWerte.wert;
+        });
+    });
+    let maximum = d3.max(personenDaten, function (person) {
+        return d3.max(person.werte, function (personenWerte) {
+            return personenWerte.wert;
+        });
+    });
+    y.domain([minimum, maximum]);
+
+    //Datum ermitteln an dem alle zusammen am schwersten sind
+    amSchwersten = personenDaten[4].werte.slice(0).sort(function (wert1, wert2) { return d3.descending(wert1.wert, wert2.wert) })[0].datum;
+    d3.select("#amschwersten").html("Wann sind alle zusammen am schwersten: " + (amSchwersten ? amSchwersten : "Keiner"));
+
+    //Entfernen von alten Graphdaten
+    zeichenflaeche.selectAll(".axis").remove();
+    zeichenflaeche.selectAll(".person").remove();
+
+    //X-Achse zeichnen
+    zeichenflaeche.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+        .append("text")
+        .attr("x", width)
+        .attr("dx", "-1em")
+        .attr("dy", "-0.21em")
+        .attr("fill", "#000")
+        .text("Zeit");
+
+    //Y-Achse zeichnen
+    zeichenflaeche.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y))
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "0.71em")
+        .attr("fill", "#000")
+        .text("Gewicht");
+
+    //Personen Linien zeichnen
+    var personLinien = zeichenflaeche.selectAll(".person")
+        .data(personenDaten).enter().append("g")
+        .attr("class", "person");
+
+    personLinien.append("path")
+        .attr("class", "line")
+        .attr("d", function (person) {
+            return linienFunktion(person.werte);
+        })
+        .attr("fill", "none")
+        .attr("stroke-width", "1.5")
+        .style("stroke", function (person, iteration) {
+            return farben(iteration);//ermittelt die Farbe
+        });
+
+    //Liniennamen zeichnen
+    personLinien.append("text")
+        .datum(function (person) {
+            return {
+                personenName: person.name,
+                personenWert: person.werte[person.werte.length - 1]
+            };
+        })
+        .attr("transform", function (dataVonDatum) { return "translate(" + x(parseTime(dataVonDatum.personenWert.datum)) + "," + y(dataVonDatum.personenWert.wert) + ")"; })
+        .attr("x", 3)
+        .attr("dy", "0.35em")
+        .style("font", "10px sans-serif")
+        .text(function (dataVonDatum) { return dataVonDatum.personenName; });
+
+}
