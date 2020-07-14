@@ -10,82 +10,100 @@ function preprocess_rawData(rawData, error) {
     let valueToComulate = ["H-vertikal", "H-horizontal", "V-vertikal", "V-drehen", "V-horizontal"];
     let valueForAmpel = ["Ampel rot", "Ampel orange", "Ampel gruen", "Ampel weiss"];
 
-    let valueOfenBearbeitung;
+    let valueOfenBearbeitung = ["B-Motor Drehkranz im Uhrzeigersinn", "B-Motor Drehkranz gegen Uhrzeigersinn",];
     let valueOfenRausRein = ["B-Motor Ofenschieber Einfahren", "B-Motor Ofenschieber Ausfahren"];
 
-    let valueToCountOnTime = [ ]; // Bearbeitungsstation motoren sowie fliessbaender
+
+    let valueToCountOnTime = ["B-Motor Saege", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Motor Foerderband vorwaerts", "S-Motor Foerderband"]; // Bearbeitungsstation motoren sowie fliessbaender
+
 
     let countdictionary = {};
     if (error) {
         console.log(error);
-    } else {
-        i = 0;
-        //console.log(rawData)
-
-        //cumulatedDistanceOverTime ist ein dictionary mit key: name des sensors val: wiederum dictionary mit datum: .... wert: kumulierte wegstrecke bis dahin
-        let cumulatedValueOverTime = valueToComulate.map(function (key) { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
-            let currentValue = 0;// variable zum zwischenspeicher der bisherigen kumulierten wegstrecke für diesen key
-            return {
-                name: key,
-                werte: rawData[0].map(function (data) {
-                    currentValue += parseInt(data.werte[key]);
-                    return { datum: data.datum, wert: currentValue};
-                })
-            }
-        });
-
-        let bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, "H-horizontal", 78,6) // in cm// dict, name des sensors, teiler (1cm entspricht teiler), einheit
-        bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit( bereinigte_cumulatedValueOverTime, "H-vertikal", 78,8) // in cm
-        bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit( bereinigte_cumulatedValueOverTime, "V-vertikal", 78,2) // in cm
-        bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit( bereinigte_cumulatedValueOverTime, "V-drehen", 2264) // in Anzahl Umdrehungen
-        bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit( bereinigte_cumulatedValueOverTime, "V-horizontal", 67) // in Anzahl Umdrehungen
-        
-
-        //console.log(cumulatedValueOverTime)
-        //console.log(bereinigte_cumulatedValueOverTime);
+    }
 
 
-        // addiere alle Anzahl der Statusänderungen sowie kumuliere alle wegstrecken um pro sensor ein 
-        // key: name des sensors val: wert am ende der zeiteinheit (in Anzahl Statusänderungen oder kumulierte wegstrecke in cm) zu erhalten 
-        rawData[0].forEach(zeitpunkt => {
-            for (const [key, val] of Object.entries(zeitpunkt.werte)) {
+    //cumulatedDistanceOverTime ist ein dictionary mit key: name des sensors val: wiederum dictionary mit datum: .... wert: kumulierte wegstrecke bis dahin
+    let cumulatedValueOverTime = valueToComulate.map(function (key) { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
+        let currentValue = 0;// variable zum zwischenspeicher der bisherigen kumulierten wegstrecke für diesen key
+        return {
+            name: key,
+            werte: rawData[0].map(function (data) {
+                currentValue += parseInt(data.werte[key]);
+                return { datum: data.datum, wert: currentValue };
+            })
+        }
+    });
 
-                if (!countdictionary.hasOwnProperty(key)) {//Initialisierung
+    let bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, "H-horizontal", 78, 6) // in cm// dict, name des sensors, teiler (1cm entspricht teiler), einheit
+    bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "H-vertikal", 78, 8) // in cm
+    bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-vertikal", 78, 2) // in cm
+    bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-drehen", 2264) // in Anzahl Umdrehungen
+    bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-horizontal", 67) // in Anzahl Umdrehungen
+
+
+    //console.log(cumulatedValueOverTime)
+    //console.log(bereinigte_cumulatedValueOverTime);
+
+
+    // addiere alle Anzahl der Statusänderungen sowie kumuliere alle wegstrecken um pro sensor ein 
+    // key: name des sensors val: wert am ende der zeiteinheit (in Anzahl Statusänderungen oder kumulierte wegstrecke in cm) zu erhalten 
+    i = 0;
+    rawData[0].forEach(zeitpunkt => {
+        for (const [key, val] of Object.entries(zeitpunkt.werte)) {
+            if (!countdictionary.hasOwnProperty(key)) {//Initialisierung
+                if (valueOfenRausRein.includes(key)) {
+                    if (val == " true") {
+                        countdictionary["B-Motor Ofenschieber RausRein"] = 5; //in CM
+                    } else {
+                        countdictionary["B-Motor Ofenschieber RausRein"] = 0;
+                    }
+                } else if (valueOfenBearbeitung.includes(key)) {
+                    if (val == " true") {
+                        countdictionary["B-Motor Drehkranz Bearbeitung imgegen Uhrzeigersinn"] = 19, 1; //in CM
+                    } else {
+                        countdictionary["B-Motor Drehkranz Bearbeitung imgegen Uhrzeigersinn"] = 0;
+                    }
+
+                } else if (valueToCountOnTime.includes(key)) {
                     if (val == " true") {
                         countdictionary[key] = 1
-
-                    } else if (val == " false") {
+                    } else {
                         countdictionary[key] = 0
-
-                    } else if (valueToComulate.includes(key)) { //int wert zum kumulieren
-                        countdictionary[key] = 0 //need to be set to one, da mit 0 sonst nicht initialisiert 
-
-                    } else if(valueOfenRausRein.includes(key)){
-                        countdictionary["B-Motor Ofenschieber RausRein"]
                     }
+                } else if (val == " true") {
+                    countdictionary[key] = 1
 
-                } else {
-                    //console.log(key)
-                    //console.log(valueToComulate.includes(key))
-                    if (valueForAmpel.includes(key)) {
-                        if (val == " true") {
-                            countdictionary[key] += 1;
-                        }
+                } else if (val == " false") {
+                    countdictionary[key] = 0
 
-                    } else if (valueToComulate.includes(key) && (rawData[0][i - 1].werte[key] != val)) {
-                        //countTaster
-                        // console.log(val)
-                        countdictionary[key] += parseInt(val, 10)
-                    } else if ((rawData[0][i - 1].werte[key]) != val) {
+                }
+            } else {
+                if (valueForAmpel.includes(key)) {
+                    if (val == " true") {
+                        countdictionary[key] += 1;
+                    }
+                } else if (valueOfenRausRein.includes(key)) {// Ofen raus rein
+                    if (val == " true") {
+                        countdictionary["B-Motor Ofenschieber RausRein"] += 5; //in CM
+                    }
+                } else if (valueOfenBearbeitung.includes(key)) {// Ofen Bearbeitung
+                    if (val == " true") {
+                        countdictionary["B-Motor Drehkranz Bearbeitung imgegen Uhrzeigersinn"] += 19, 1;// in CM
+                    }
+                } else if (valueToCountOnTime.includes(key)) {
+                    if (val == " true") {
                         countdictionary[key] += 1
                     }
+                } else if ((rawData[0][i - 1].werte[key]) != val) {
+                    countdictionary[key] += 1
                 }
             }
-            i++;
-        });
+        }
+        i++;
+    });
 
 
-    }
 
     liste = [];
 
@@ -98,8 +116,9 @@ function preprocess_rawData(rawData, error) {
     //Listen von Modul Fischertechnik
     listeHochregalFi = ["Referenztaster horizontal", "Referenztaster vertikal", "Referenztaster Ausleger vorne", "Referenztaster Ausleger hinten", "Lichtschranke innen", "Lichtschranke aussen"];
     listeVerteilstationFi = ["V-Referenzschalter vertikal", "V-Referenzschalter horizontal", "V-Referenzschalter drehen"]
-    listeBearbeitungsstationFi = ["B-Motor Drehkranz im Uhrzeigersinn", "B-Motor Drehkranz gegen Uhrzeigersinn", "B-Motor Foerderband vorwaerts", "B-Motor Saege", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Leuchte Ofen", "B-Referenzschalter Drehkranz (Pos. Sauger)", "B-Referenzschalter Drehkranz (Pos. Foerderband)", "B-Lichtschranke Ende Foerderband", "B-Referenzschalter Drehkranz (Pos. Saege)", "B-Referenzschalter Sauger (Pos. Drehkranz)", "B-Referenzschalter Ofenschieber Innen", "B-Referenzschalter Ofenschieber Aussen", "B-Referenzschalter Sauger (Pos. Brennofen)", "B-Lichtschranke Brennofen"]
-    listeSortierstationFi = ["S-Lichtschranke Eingang", "S-Lichtschranke nach Farbsensor", "S-Lichtschranke weiss", "S-Lichtschranke rot", "S-Lichtschranke blau", "S-Motor Foerderband"]
+    listeBearbeitungsstationFi = ["B-Leuchte Ofen", "B-Referenzschalter Drehkranz (Pos. Sauger)", "B-Referenzschalter Drehkranz (Pos. Foerderband)", "B-Lichtschranke Ende Foerderband", "B-Referenzschalter Drehkranz (Pos. Saege)", "B-Referenzschalter Sauger (Pos. Drehkranz)", "B-Referenzschalter Ofenschieber Innen", "B-Referenzschalter Ofenschieber Aussen", "B-Referenzschalter Sauger (Pos. Brennofen)", "B-Lichtschranke Brennofen"]
+    listeSortierstationFi = ["S-Lichtschranke Eingang", "S-Lichtschranke nach Farbsensor", "S-Lichtschranke weiss", "S-Lichtschranke rot", "S-Lichtschranke blau"]
+    //kumulierte wegstrecke
     listeComulateHochregallager = ["H-vertikal", "H-horizontal"];
     listeComulateVerteilstation = ["V-vertikal", "V-drehen", "V-horizontal"];
 
@@ -121,15 +140,18 @@ function preprocess_rawData(rawData, error) {
     let mapAmpelgruen = mapModule(listeAmpelgruen, liste);
     let mapAmpelweiss = mapModule(listeAmpelweiss, liste);
 
-    let mapComulateHochregallager = mapModuleComulate(listeComulateHochregallager, liste); //ACHTUNG: Für Kummulierte Wegstrecke extra Mapmethode!
-    let mapComulateVerteilstation = mapModuleComulate(listeComulateVerteilstation, liste);
-
     let mapFesto = mapModule(listeFesto, liste);
+
 
     aktualisiereListe(mapHochregalFi, "hochregallager");
     aktualisiereListe(mapVerteilstationFi, "verteilstation");
     aktualisiereListe(mapBearbeitungsstationFi, "bearbeitungsstation");
     aktualisiereListe(mapSortierstationFi, "sortierstation");
+    
+    console.log(mapHochregalFi)
+    console.log(bereinigte_cumulatedValueOverTime)
+
+    aktualisiereListeComulate(bereinigte_cumulatedValueOverTime, "hochregallager_comulate")
 
 
     let gesamtAmpelZyklen = rawData[0].length;
@@ -138,31 +160,43 @@ function preprocess_rawData(rawData, error) {
     aktualisiereAmpel(mapAmpelgruen, "lightgreen", gesamtAmpelZyklen);
     aktualisiereAmpel(mapAmpelweiss, "lightwhite", gesamtAmpelZyklen);
 
-    aktualisiereListeComulate(mapComulateHochregallager, "hochregallager_comulate"); //ACHTUNG: Für Kummulierte Wegstrecke extra aktualisiere()!
-    aktualisiereListeComulate(mapComulateVerteilstation, "verteilstation_comulate"); //ACHTUNG: Für Kummulierte Wegstrecke extra aktualisiere()!
-
     zeigeDiagram(mapHochregalFi, "hochregallagerG");
     zeigeDiagram(mapVerteilstationFi, "verteilstationG");
     zeigeDiagram(mapBearbeitungsstationFi, "bearbeitungsstationG");
     zeigeDiagram(mapSortierstationFi, "sortierstationG");
-
 }
 
-//beste funktion
-function bereinigeKumulierteWegstreckenachEinheit(cumulatedDistanceOverTime, nameDesSensors, teiler){
-    bereinigte_CumulatedDistanceOverTime = cumulatedDistanceOverTime.map(function(datarow){
-        if(datarow.name == nameDesSensors){
+function aktualisiereListeComulate(listeModul, targetID) {
+
+    id = "#" + targetID;
+    //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
+    let d = d3.select(id).selectAll("li").data(listeModul);
+    //console.log(d)
+    //console.log(countTaster)
+    //.enter().append(): Daten hinzufuegen falls es mehr Daten als Elemente im HTML gibt.
+    //geschieht hier für jede Zeile von daten.
+    d.enter().append("li")
+        .text(function (listeModul) {
+            return listeModul.name + ": " + listeModul.werte[listeModul.werte.length - 1].wert + " cm";
+        });
+    //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
+    d.exit().remove();
+}
+
+function bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, nameDesSensors, teiler) {
+    let bereinigte_CumulatedValueOverTime = cumulatedValueOverTime.map(function (datarow) {
+        if (datarow.name == nameDesSensors) {
             return {
                 name: datarow.name,
-                werte: datarow.werte.map(function(data){
-                    return { datum: data.datum, wert: (parseInt(data.wert) / teiler).toFixed(1)};// rundet auf eine nachkommastelle den neuen wert genau
+                werte: datarow.werte.map(function (data) {
+                    return { datum: data.datum, wert: (parseInt(data.wert) / teiler).toFixed(1) };// rundet auf eine nachkommastelle den neuen wert genau
                 })
             }
         } else {
             return datarow;
         }
     });
-    return bereinigte_CumulatedDistanceOverTime;
+    return bereinigte_CumulatedValueOverTime;
 }
 
 function zeigeDiagram(liste, targetid) {
@@ -245,22 +279,6 @@ function mapModule(listeModul, listeGlobal) {
     return filteredListe;
 }
 
-function mapModuleComulate(listeModul, listeGlobal) {
-    let filteredListe = listeGlobal.map(function (d, i) {
-        if (listeModul.includes(d.key)) {
-            //console.log(d)
-            //console.log(d.val)
-            //TODO
-            d.val = Math.round(d.val / 79)
-            return (d);
-        }
-    }).filter(function (x) {
-        return x !== undefined;
-    });
-    return filteredListe;
-
-}
-
 function aktualisiereListe(listeModul, targetID) {
 
     id = "#" + targetID;
@@ -300,21 +318,4 @@ function aktualisiereAmpel(listeModul, targetID, gesamtAmpelZyklen) {
 }
 
 
-function aktualisiereListeComulate(listeModul, targetID) {
 
-    id = "#" + targetID;
-
-    //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
-    let d = d3.select(id).selectAll("li").data(listeModul);
-    //console.log(d)
-    //console.log(countTaster)
-    //.enter().append(): Daten hinzufuegen falls es mehr Daten als Elemente im HTML gibt.
-    //geschieht hier für jede Zeile von daten.
-    d.enter().append("li")
-        .text(function (listeModul) {
-            return listeModul.key + ": " + listeModul.val + " cm";
-        });
-    //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
-    d.exit().remove();
-    //console.log(countTaster[0])
-}
