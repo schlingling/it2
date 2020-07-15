@@ -12,7 +12,7 @@
 
   <!-- einbinden von d3js -->
   <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
-  <script type="text/javascript" src="index.js"></script>
+  <script type="text/javascript" src="festo.js"></script>
   <script type="text/javascript" src="filter.js"></script>
 
 
@@ -39,10 +39,10 @@
       <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
           <li class="nav-item active">
-            <a class="nav-link navlinkc" href="">Fischertechnik <span class="sr-only">(current)</span></a>
+            <a class="nav-link navlinkc" href="./index.html">Fischertechnik <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link navlinkc" href="./festo.html">Festo</a>
+            <a class="nav-link navlinkc" href="">Festo</a>
           </li>
         </ul>
 
@@ -99,85 +99,16 @@
       <h2>Anzahl Statusänderungen</h2>
       <div class="row">
         <div class="col-6">
-          <h3>Hochregallager:</h3>
-          <ul id="hochregallager"></ul>
+          <h3>Umsetzer:</h3>
+          <ul id="umsetzer"></ul>
         </div>
-        <div id="hochregallagerG" class="col-6">
+        <div id="umsetzerG" class="col-6">
           <!--Graph-->
         </div>
 
       </div>
 
-      <div class="row">
-        <div class="col-6">
-          <h3>Verteilstation:</h3>
-          <ul id="verteilstation"></ul>
-        </div>
-        <div id="verteilstationG" class="col-6">
-
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-6">
-          <h3>Bearbeitungsstation:</h3>
-          <ul id="bearbeitungsstation"></ul>
-        </div>
-        <div id="bearbeitungsstationG" class="col-6">
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-6">
-          <h3>Sortierstation:</h3>
-          <ul id="sortierstation"></ul>
-        </div>
-        <div id="sortierstationG" class="col-6">
-        </div>
-      </div>
-
-
-      <!----------------------------------------------------- Kummulierte Wegstrecke ------------------------------------------->
-      <h2>Kummulierte Wegstrecke</h2>
-      <div class="row">
-        <div class="col-6">
-          <h3>Verteilstation Schwenkarm:</h3>
-          <ul id="verteilstation_comulate"></ul>
-          <h3>Hochregallager:</h3>
-          <ul id="hochregallager_comulate"></ul>
-          <h3>Bearbeitungsstation</h3>
-          <ul id="bearbeitungsstation_cumulate"></ul>
-        </div>
-        <div id="kummulierteWegStreckeG" class="col-6">
-
-        </div>
-      </div>
-
-      <h2>Umdrehungen</h2>
-      <div class="row">
-        <div class="col-6">
-          <h3>Verteilstation Umdrehungen Schwenkarm:</h3>
-          <ul id="verteilstation_umdrehungen_schwenkarm"></ul>
-        </div>
-        <div class="col-6">
-
-        </div>
-      </div>
-
-      <h2>Motorenlaufzeit</h2>
-      <div class="row">
-        <div class="col-6">
-          <h3>Bearbeitungsstation</h3>
-          <ul id="bearbeitungsstation_motorenlaufzeit"></ul>
-        </div>
-        <div class="col-6">
-          <h3>Sortierstation</h3>
-          <ul id="sortierstation_motorenlaufzeit"></ul>
-        </div>
-      </div>
-
-
-    </div>
+      
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

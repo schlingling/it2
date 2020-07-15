@@ -162,7 +162,7 @@ function preprocess_rawData(rawData, error) {
     aktualisiereListe(mapBearbeitungsstationFi, "bearbeitungsstation", undefined, true);
     aktualisiereListe(mapSortierstationFi, "sortierstation", undefined, true);
     //diagramme anzeigen
-    zeigeDiagram(mapHochregalFi, "hochregallagerG",);
+    zeigeDiagram(mapHochregalFi, "hochregallagerG");
     zeigeDiagram(mapVerteilstationFi, "verteilstationG");
     zeigeDiagram(mapBearbeitungsstationFi, "bearbeitungsstationG");
     zeigeDiagram(mapSortierstationFi, "sortierstationG");

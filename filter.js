@@ -44,11 +44,6 @@ function transformiereDaten(datenJson,datumFrom, datumTo) {
     //Es wird nur ein Ergebnis erwartet
     let ergebnis = new Array();
 
-    console.log(datenJson)
-    console.log(datumFrom)
-    console.log(datumTo)
-    console.log(Date.parse(datumFrom))
-    console.log(Date.parse(datumTo))
 
     let secsFrom =Date.parse(datumFrom);
     let secsTo =Date.parse(datumTo);
