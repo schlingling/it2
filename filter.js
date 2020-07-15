@@ -67,11 +67,6 @@ function transformiereDaten(datenJson,datumFrom, datumTo) {
     });
 
 
-   // gewaehltePerson = d3.select("#personenDropdown").node().value;
-
-   // let gewicht = new Gewicht(gewaehltePerson, parseFloatAusStringMitKomma(datensatz.werte[gewaehltePerson]), datensatz.datum);
-   // ergebnis.push(gewicht);
-   // return ergebnis;
 
    return datenJson;
 }

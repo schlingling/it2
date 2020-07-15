@@ -1,3 +1,5 @@
+let font = "Roboto"
+
 let colorscheme = d3.schemeCategory10 ; //schemeTableau10
 //let colorscheme = d3.schemeTableau10;
 //let colorscheme = d3.schemeDark2
@@ -62,25 +64,7 @@ function preprocess_rawData(rawData, error) {
     rawData[0].forEach(zeitpunkt => {
         for (const [key, val] of Object.entries(zeitpunkt.werte)) {
             if (!countdictionary.hasOwnProperty(key)) {//Initialisierung
-                if (valueOfenRausRein.includes(key)) {
-                    if (val == " true") {
-                        countdictionary["B-Motor Ofenschieber RausRein"] = 5; //in CM
-
-                    } else if (val == " false") {
-                        countdictionary["B-Motor Ofenschieber RausRein"] = 0;
-                    }
-                    countdictionary["B-Motor Ofenschieber Einfahren"] = -1; //verwendet um initialisierung der neuen variable raus rein anzuzeigen
-                    countdictionary["B-Motor Ofenschieber Ausfahren"] = -1; //verwendet um initialisierung der neuen variable raus rein anzuzeigen
-                } else if (valueOfenBearbeitung.includes(key)) {
-                    if (val == " true") {
-                        countdictionary["B-Motor Drehkranz Bearbeitung"] = 19.1; //in CM
-                    } else if (val == " false") {
-                        countdictionary["B-Motor Drehkranz Bearbeitung"] = 0;
-                    }
-                    countdictionary["B-Motor Drehkranz im Uhrzeigersinn"] = -1;//verwendet um initialisierung der neuen variable raus rein anzuzeigen
-                    countdictionary["B-Motor Drehkranz gegen Uhrzeigersinn"] = -1;//verwendet um initialisierung der neuen variable raus rein anzuzeigen
-
-                } else if (valueToCountOnTime.includes(key)) {
+                if (valueToCountOnTime.includes(key)) {
                     if (val == " true") {
                         countdictionary[key] = 1
                     } else {
@@ -97,14 +81,6 @@ function preprocess_rawData(rawData, error) {
                 if (valueForAmpel.includes(key)) {
                     if (val == " true") {
                         countdictionary[key] += 1;
-                    }
-                } else if (valueOfenRausRein.includes(key)) {// Ofen raus rein
-                    if (val == " true") {
-                        countdictionary["B-Motor Ofenschieber RausRein"] = Math.round((parseFloat(countdictionary["B-Motor Ofenschieber RausRein"]) + 5), 1); //in CM
-                    }
-                } else if (valueOfenBearbeitung.includes(key)) {// Ofen Bearbeitung
-                    if (val == " true") {
-                        countdictionary["B-Motor Drehkranz Bearbeitung"] = Math.round((parseFloat(countdictionary["B-Motor Drehkranz Bearbeitung"]) + 19.1), 1);// in CM
                     }
                 } else if (valueToCountOnTime.includes(key)) {
                     if (val == " true") {
@@ -143,9 +119,6 @@ function preprocess_rawData(rawData, error) {
     listeToCountOnTimeBearbeitungsstation = ["B-Motor Saege", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Motor Foerderband vorwaerts"]; // Bearbeitungsstation motoren sowie fliessbaender
     listeToCountOnTimeSortierstation = ["S-Motor Foerderband"];
 
-    //Listen von Modul Festo
-    listeFesto = ["Umsetzer Endanschlag 1 (3B1)", "Umsetzer Endanschlag 2 (3B2)"]
-
     for (const [key, val] of Object.entries(countdictionary)) {
         liste.push({ key, val })
     }
@@ -154,7 +127,6 @@ function preprocess_rawData(rawData, error) {
     let mapVerteilstationFi = mapModule(listeVerteilstationFi, liste);
     let mapBearbeitungsstationFi = mapModule(listeBearbeitungsstationFi, liste);
     let mapSortierstationFi = mapModule(listeSortierstationFi, liste);
-    let mapFesto = mapModule(listeFesto, liste);//Festo
 
     //textuelleaenderungen  anzeigen
     aktualisiereListe(mapHochregalFi, "hochregallager", undefined, true);
@@ -186,10 +158,6 @@ function preprocess_rawData(rawData, error) {
     let mapVerteilstationWegstrecken = mapModule(listeComulateVerteilstation, bereinigte_cumulatedValueOverTime);
     let mapVerteilstationUmdrehungen = mapModule(listeUmdrehungenVerteilstation, bereinigte_cumulatedValueOverTime);
     let mapOfenBearbeitungUndRausReinWegstrecke = mapModule(listeOfenBearbeitungUndRausRein, bereinigte_cumulatedValueOverTime);
-
-
-
-
 
 
     //console.log(bereinigte_cumulatedValueOverTime)
@@ -254,6 +222,7 @@ function cumulatedValueBoolean(rawData, valueToLookAt, Aenderung) {
     return cumulatedValueOverTime;
 }
 
+//merges two sensors
 function mergecumulatedValueOfen(cumulatedOfenBearbeitungOverTime, valuesToMerge, finalkey) {
     let mergedcumulatedValueOverTime = [berechne()]
 
@@ -309,8 +278,8 @@ function zeigeDiagram(liste, targetid) {
     //console.log(liste)
     // set the dimensions and margins of the graph
     var margin = { top: 20, right: 20, bottom: 30, left: 40 },
-        width = 400 - margin.left - margin.right,
-        height = 300 - margin.top - margin.bottom;
+        width = 450 - margin.left - margin.right,
+        height = 350 - margin.top - margin.bottom;
 
     // set the ranges
     var x = d3.scaleBand()
@@ -343,7 +312,7 @@ function zeigeDiagram(liste, targetid) {
         .attr("width", 12)//x.bandwidth()
         .attr("y", function (d) { return y(d.val); })
         .attr("height", function (d) { return height - y(d.val); })
-        .style("fill", function (person, iteration) {
+        .style("fill", function (sensor, iteration) {
             return farben(iteration);//ermittelt die Farbe
         });
     //.style("fill", "rgb(189, 189, 189)");
@@ -362,12 +331,12 @@ function zeigeDiagram(liste, targetid) {
 
     balkenText.enter().append("text")
         .attr("class", "balkentext")
-        .attr("x", -250)
+        .attr("x", -295)
         .attr("y", function (d) { return x(d.key); })
         .text(function (d) { return d.key; })
 
         .attr("transform", "rotate(-90)")
-        .attr("font-family", "sans-serif")
+        .attr("font-family", font)
         .attr("font-size", "12px")
         .style("fill", "white")
 
@@ -382,8 +351,13 @@ function zeigeDiagram(liste, targetid) {
 
     // add the y Axis
     svg.append("g")
-        .call(d3.axisLeft(y)).style("color", "white");
-
+        .call(d3.axisLeft(y)).style("color", "white")
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -40)
+        .attr("dy", "0.71em")
+        .attr("fill", "white")
+        .text("Anzahl Statusänderungen");
 
 }
 
@@ -438,7 +412,7 @@ function aktualisiereListe(listeModul, targetID, einheit, pfeil) {
                 } else {
                     return listeModul.key + ": " + listeModul.val + einheit + " ";
                 }
-            }).append("text").text("<-").style("color", function (person, iteration) {
+            }).append("text").text("<-").style("color", function (sensor, iteration) {
                 return farben(iteration);//ermittelt die Farbe
             });
     } else {
@@ -495,13 +469,13 @@ function zeigeLinePlot(sensorDaten) {
     d3.select("#kummulierteWegStreckeG").selectAll("*").remove()
 
     svg = d3.select("#kummulierteWegStreckeG").append("svg")//Auf Webseite
-        .attr("width", 400)
+        .attr("width", 500)
         .attr("height", 500)
 
 
     //Statische Felder
     //svg = d3.select("svg");
-    margin = { top: 20, right: 80, bottom: 30, left: 50 };
+    margin = { top: 20, right: 160, bottom: 30, left: 50 };
     width = svg.attr("width") - margin.left - margin.right;
     height = svg.attr("height") - margin.top - margin.bottom;
     zeichenflaeche = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -548,7 +522,7 @@ function zeigeLinePlot(sensorDaten) {
 
     //Entfernen von alten Graphdaten
     zeichenflaeche.selectAll(".axis").remove();
-    zeichenflaeche.selectAll(".person").remove();
+    zeichenflaeche.selectAll(".sensor").remove();
 
     //X-Achse zeichnen
     zeichenflaeche.append("g")
@@ -557,8 +531,8 @@ function zeigeLinePlot(sensorDaten) {
         .call(d3.axisBottom(x)).style("color", "white")
         .append("text")
         .attr("x", width)
-        .attr("dx", "-1em")
-        .attr("dy", "-0.21em")
+        .attr("dx", "1em")
+        .attr("dy", "2.4em")
         .attr("fill", "white")
         .text("Zeit");
 
@@ -568,40 +542,40 @@ function zeigeLinePlot(sensorDaten) {
         .call(d3.axisLeft(y)).style("color", "white")
         .append("text")
         .attr("transform", "rotate(-90)")
-        .attr("y", 6)
+        .attr("y", -50)
         .attr("dy", "0.71em")
         .attr("fill", "white")
         .text("Wegstrecke in cm");
 
     //Personen Linien zeichnen
-    var personLinien = zeichenflaeche.selectAll(".person")
+    var sensorLinien = zeichenflaeche.selectAll(".sensor")
         .data(sensorDaten).enter().append("g")
-        .attr("class", "person");
+        .attr("class", "sensor");
 
-    personLinien.append("path")
+    sensorLinien.append("path")
         .attr("class", "line")
-        .attr("d", function (person) {
-            return linienFunktion(person.werte);
+        .attr("d", function (sensor) {
+            return linienFunktion(sensor.werte);
         })
         .attr("fill", "none")
-        .attr("stroke-width", "1.5")
-        .style("stroke", function (person, iteration) {
+        .attr("stroke-width", "3")
+        .style("stroke", function (sensor, iteration) {
             return farben(iteration);//ermittelt die Farbe
         });
 
     //Liniennamen zeichnen
-    personLinien.append("text")
-        .datum(function (person) {
+    sensorLinien.append("text")
+        .datum(function (sensor) {
             return {
-                personenName: person.name,
-                personenWert: person.werte[person.werte.length - 1]
+                sensorenName: sensor.name,
+                sensorenWert: sensor.werte[sensor.werte.length - 1]
             };
         })
-        .attr("transform", function (dataVonDatum) { return "translate(" + x(parseTime(dataVonDatum.personenWert.datum)) + "," + y(dataVonDatum.personenWert.wert) + ")"; })
+        .attr("transform", function (dataVonDatum) { return "translate(" + x(parseTime(dataVonDatum.sensorenWert.datum)) + "," + y(dataVonDatum.sensorenWert.wert) + ")"; })
         .attr("x", 3)
         .attr("dy", "0.35em")
-        .style("font", "10px sans-serif")
+        .style("font", "10px " + font)
         .style("fill", "white")
-        .text(function (dataVonDatum) { return dataVonDatum.personenName; });
+        .text(function (dataVonDatum) { return dataVonDatum.sensorenName; })
 
 }

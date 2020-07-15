@@ -45,6 +45,7 @@
             <a class="nav-link navlinkc" href="./festo.html">Festo</a>
           </li>
         </ul>
+      <img src="pid4cps.png" style="width: 6rem;">
 
 
     </nav>
@@ -71,7 +72,7 @@
 
 
         <div class="col-3">
-          <label for="filterfrom">Choose a start time </label>
+          <label for="filterfrom">Startzeitpunkt: </label>
           <input type="datetime-local" id="filterfrom" name="filterfrom" value="2019-05-15T12:00" min="2019-05-01T00:00"
             max="2020-12-21T00:00">
 
@@ -79,7 +80,7 @@
 
 
         <div class="col-3">
-          <label for="filterto">Choose a end time</label>
+          <label for="filterto">Endzeitpunkt:</label>
           <input type="datetime-local" id="filterto" name="filterto" value="2019-05-15T12:06" min="2019-05-01T00:00"
             max="2020-12-21T00:00">
 
@@ -98,18 +99,18 @@
        
       <h2>Anzahl Statusänderungen</h2>
       <div class="row">
-        <div class="col-6">
+        <div class="col-5">
           <h3>Hochregallager:</h3>
           <ul id="hochregallager"></ul>
         </div>
-        <div id="hochregallagerG" class="col-6">
+        <div id="hochregallagerG" class="col-7">
           <!--Graph-->
         </div>
 
       </div>
 
       <div class="row">
-        <div class="col-6">
+        <div class="col-5">
           <h3>Verteilstation:</h3>
           <ul id="verteilstation"></ul>
         </div>
@@ -119,20 +120,20 @@
       </div>
 
       <div class="row">
-        <div class="col-6">
+        <div class="col-5">
           <h3>Bearbeitungsstation:</h3>
           <ul id="bearbeitungsstation"></ul>
         </div>
-        <div id="bearbeitungsstationG" class="col-6">
+        <div id="bearbeitungsstationG" class="col-7">
         </div>
       </div>
 
       <div class="row">
-        <div class="col-6">
+        <div class="col-5">
           <h3>Sortierstation:</h3>
           <ul id="sortierstation"></ul>
         </div>
-        <div id="sortierstationG" class="col-6">
+        <div id="sortierstationG" class="col-7">
         </div>
       </div>
 
@@ -140,7 +141,7 @@
       <!----------------------------------------------------- Kummulierte Wegstrecke ------------------------------------------->
       <h2>Kummulierte Wegstrecke</h2>
       <div class="row">
-        <div class="col-6">
+        <div class="col-5">
           <h3>Verteilstation Schwenkarm:</h3>
           <ul id="verteilstation_comulate"></ul>
           <h3>Hochregallager:</h3>
@@ -148,29 +149,29 @@
           <h3>Bearbeitungsstation</h3>
           <ul id="bearbeitungsstation_cumulate"></ul>
         </div>
-        <div id="kummulierteWegStreckeG" class="col-6">
+        <div id="kummulierteWegStreckeG" class="col-7">
 
         </div>
       </div>
 
       <h2>Umdrehungen</h2>
       <div class="row">
-        <div class="col-6">
+        <div class="col-5">
           <h3>Verteilstation Umdrehungen Schwenkarm:</h3>
           <ul id="verteilstation_umdrehungen_schwenkarm"></ul>
         </div>
-        <div class="col-6">
+        <div class="col-7">
 
         </div>
       </div>
 
       <h2>Motorenlaufzeit</h2>
       <div class="row">
-        <div class="col-6">
+        <div class="col-5">
           <h3>Bearbeitungsstation</h3>
           <ul id="bearbeitungsstation_motorenlaufzeit"></ul>
         </div>
-        <div class="col-6">
+        <div class="col-7">
           <h3>Sortierstation</h3>
           <ul id="sortierstation_motorenlaufzeit"></ul>
         </div>

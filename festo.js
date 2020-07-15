@@ -1,3 +1,5 @@
+let font = "Roboto"
+
 let colorscheme = d3.schemeCategory10 ; //schemeTableau10
 //let colorscheme = d3.schemeTableau10;
 //let colorscheme = d3.schemeDark2
@@ -109,8 +111,8 @@ function zeigeDiagram(liste, targetid) {
     //console.log(liste)
     // set the dimensions and margins of the graph
     var margin = { top: 20, right: 20, bottom: 30, left: 40 },
-        width = 400 - margin.left - margin.right,
-        height = 300 - margin.top - margin.bottom;
+        width = 450 - margin.left - margin.right,
+        height = 350 - margin.top - margin.bottom;
 
     // set the ranges
     var x = d3.scaleBand()
@@ -143,7 +145,7 @@ function zeigeDiagram(liste, targetid) {
         .attr("width", 12)//x.bandwidth()
         .attr("y", function (d) { return y(d.val); })
         .attr("height", function (d) { return height - y(d.val); })
-        .style("fill", function (person, iteration) {
+        .style("fill", function (sensor, iteration) {
             return farben(iteration);//ermittelt die Farbe
         });
     //.style("fill", "rgb(189, 189, 189)");
@@ -162,12 +164,12 @@ function zeigeDiagram(liste, targetid) {
 
     balkenText.enter().append("text")
         .attr("class", "balkentext")
-        .attr("x", -250)
+        .attr("x", -295)
         .attr("y", function (d) { return x(d.key); })
         .text(function (d) { return d.key; })
 
         .attr("transform", "rotate(-90)")
-        .attr("font-family", "sans-serif")
+        .attr("font-family", font)
         .attr("font-size", "12px")
         .style("fill", "white")
 
@@ -182,7 +184,13 @@ function zeigeDiagram(liste, targetid) {
 
     // add the y Axis
     svg.append("g")
-        .call(d3.axisLeft(y)).style("color", "white");
+        .call(d3.axisLeft(y)).style("color", "white")
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -40)
+        .attr("dy", "0.71em")
+        .attr("fill", "white")
+        .text("Anzahl Statusänderungen");
 
 
 }
@@ -218,7 +226,7 @@ function aktualisiereListe(listeModul, targetID, einheit, pfeil) {
                 } else {
                     return listeModul.key + ": " + listeModul.val + einheit + " ";
                 }
-            }).append("text").text("<-").style("color", function (person, iteration) {
+            }).append("text").text("<-").style("color", function (sensor, iteration) {
                 return farben(iteration);//ermittelt die Farbe
             });
     } else {
