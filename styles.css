@@ -1,9 +1,17 @@
 body {
-  background-color: #585858;
+  background-color: #717e87;
 }
 
 h1 {
   font-size: 30px;
+}
+
+.navbar-custom {
+  background-color: #314151;
+}
+
+.navbar-custom .navlinkc {
+  color: white;
 }
 
 .container {
@@ -36,7 +44,7 @@ h2 {
 }
 
 h3 {
-  color: #bdbdbd;
+  color: white;
   font-size: 20px;
 }
 

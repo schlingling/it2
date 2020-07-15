@@ -255,7 +255,9 @@ function bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, nameDe
 
 function zeigeDiagram(liste, targetid) {
 
-   
+    let farben = d3.scaleOrdinal(d3.schemeTableau10); //andere Beispiele: schemePastel2, schemeSet1  
+
+   /*
     liste = liste.filter(function(x){
 
         if (x.val == 0){
@@ -263,7 +265,7 @@ function zeigeDiagram(liste, targetid) {
         }
         return true;
     });
-   
+   */
     id = "#" + targetid;
     d3.select(id).selectAll("*").remove();
 
@@ -304,7 +306,16 @@ function zeigeDiagram(liste, targetid) {
         .attr("width", 12)//x.bandwidth()
         .attr("y", function (d) { return y(d.val); })
         .attr("height", function (d) { return height - y(d.val); })
-        .style("fill", "rgb(189, 189, 189)");
+        .style("fill", function (person, iteration) {
+            return farben(iteration);//ermittelt die Farbe
+        });
+        //.style("fill", "rgb(189, 189, 189)");
+
+        //TODO:
+        
+
+
+
 
     bars.exit().remove();
     
@@ -321,6 +332,7 @@ function zeigeDiagram(liste, targetid) {
         .attr("transform", "rotate(-90)")
         .attr("font-family", "sans-serif")
         .attr("font-size", "12px")
+        .style("fill", "white")
         
 
 
@@ -329,11 +341,11 @@ function zeigeDiagram(liste, targetid) {
     // add the x Axis
     svg.append("g")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(xachsenwerte));
+        .call(d3.axisBottom(xachsenwerte)).style("color", "white");
 
     // add the y Axis
     svg.append("g")
-        .call(d3.axisLeft(y));
+        .call(d3.axisLeft(y)).style("color", "white");
 
 
 }
@@ -351,6 +363,8 @@ function mapModule(listeModul, listeGlobal) {
 
 function aktualisiereListe(listeModul, targetID, einheit) {
 
+    let farben = d3.scaleOrdinal(d3.schemeTableau10); //andere Beispiele: schemePastel2, schemeSet1  
+    
     id = "#" + targetID;
     d3.select(id).selectAll("*").remove();
     //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
@@ -362,10 +376,12 @@ function aktualisiereListe(listeModul, targetID, einheit) {
     d.enter().append("li")
         .text(function (listeModul) {
             if(einheit == undefined){
-                return listeModul.key + ": " + listeModul.val;
+                return listeModul.key + ": "+listeModul.val + " ";
             } else {
-                return listeModul.key + ": " + listeModul.val + einheit;
+                return listeModul.key + ": "+listeModul.val + einheit + " ";
             }
+        }).append("text").text("C").style("color", function (person, iteration) {
+            return farben(iteration);//ermittelt die Farbe
         });
     //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
     d.exit().remove();
@@ -412,7 +428,7 @@ function zeigeLinePlot(sensorDaten) {
 
     svg = d3.select("#kummulierteWegStreckeG").append("svg")//Auf Webseite
         .attr("width", 400)
-        .attr("height", 300)
+        .attr("height", 500)
        
 
     //Statische Felder
@@ -425,7 +441,7 @@ function zeigeLinePlot(sensorDaten) {
     //Definition der Achstypen und Größe
     x = d3.scaleTime().range([0, width]);
     y = d3.scaleLinear().range([height, 0]);
-    farben = d3.scaleOrdinal(d3.schemeCategory10); //andere Beispiele: schemePastel2, schemeSet1  
+    farben = d3.scaleOrdinal(d3.schemeSet3); //andere Beispiele: schemePastel2, schemeSet1  
 
     //Linienfunktion
     linienFunktion = d3.line()
@@ -470,23 +486,23 @@ function zeigeLinePlot(sensorDaten) {
     zeichenflaeche.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x))
+        .call(d3.axisBottom(x)).style("color", "white")
         .append("text")
         .attr("x", width)
         .attr("dx", "-1em")
         .attr("dy", "-0.21em")
-        .attr("fill", "#000")
+        .attr("fill", "white")
         .text("Zeit");
 
     //Y-Achse zeichnen
     zeichenflaeche.append("g")
         .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y))
+        .call(d3.axisLeft(y)).style("color", "white")
         .append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
         .attr("dy", "0.71em")
-        .attr("fill", "#000")
+        .attr("fill", "white")
         .text("Wegstrecke in cm");
 
     //Personen Linien zeichnen
@@ -517,6 +533,7 @@ function zeigeLinePlot(sensorDaten) {
         .attr("x", 3)
         .attr("dy", "0.35em")
         .style("font", "10px sans-serif")
+        .style("fill", "white")
         .text(function (dataVonDatum) { return dataVonDatum.personenName; });
 
 }
