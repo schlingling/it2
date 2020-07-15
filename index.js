@@ -255,7 +255,7 @@ function bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, nameDe
 
 function zeigeDiagram(liste, targetid) {
 
-    let farben = d3.scaleOrdinal(d3.schemeTableau10); //andere Beispiele: schemePastel2, schemeSet1  
+    let farben = d3.scaleOrdinal(d3.schemeSet3); //andere Beispiele: schemePastel2, schemeSet1  
 
    /*
     liste = liste.filter(function(x){
@@ -306,9 +306,9 @@ function zeigeDiagram(liste, targetid) {
         .attr("width", 12)//x.bandwidth()
         .attr("y", function (d) { return y(d.val); })
         .attr("height", function (d) { return height - y(d.val); })
-        .style("fill", function (person, iteration) {
-            return farben(iteration);//ermittelt die Farbe
-        });
+            .style("fill", function (person, iteration) {
+                return farben(iteration);//ermittelt die Farbe
+            });
         //.style("fill", "rgb(189, 189, 189)");
 
         //TODO:
@@ -363,7 +363,7 @@ function mapModule(listeModul, listeGlobal) {
 
 function aktualisiereListe(listeModul, targetID, einheit) {
 
-    let farben = d3.scaleOrdinal(d3.schemeTableau10); //andere Beispiele: schemePastel2, schemeSet1  
+    let farben = d3.scaleOrdinal(d3.schemeSet3); //andere Beispiele: schemePastel2, schemeSet1  
     
     id = "#" + targetID;
     d3.select(id).selectAll("*").remove();
@@ -380,7 +380,7 @@ function aktualisiereListe(listeModul, targetID, einheit) {
             } else {
                 return listeModul.key + ": "+listeModul.val + einheit + " ";
             }
-        }).append("text").text("C").style("color", function (person, iteration) {
+        }).append("text").text("<-").style("color", function (person, iteration) {
             return farben(iteration);//ermittelt die Farbe
         });
     //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
