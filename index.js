@@ -1,5 +1,8 @@
+let colorscheme = d3.schemeCategory10 ; //schemeTableau10
+//let colorscheme = d3.schemeTableau10;
+//let colorscheme = d3.schemeDark2
 function initialisiere() {
-    
+
     // Data Picker Initialization
     let rawData = []
     rawData.push(d3.json("https://it2wi1.if-lab.de/rest/ft_ablauf"));
@@ -7,11 +10,11 @@ function initialisiere() {
         console.log(error);
     });
 
-    
+
 }
 
 function aktualisiereSeite(data) {
-    preprocess_rawData([data]); 
+    preprocess_rawData([data]);
 }
 
 
@@ -36,16 +39,16 @@ function preprocess_rawData(rawData, error) {
 
     let cumulatedOfenBearbeitungOverTime = cumulatedValueBoolean(rawData, valueOfenBearbeitung, 19.1);
     let cumulatedOfenSchieberOverTime = cumulatedValueBoolean(rawData, valueOfenRausRein, 5)
-    
+
     cumulatedOfenBearbeitungOverTime = mergecumulatedValueOfen(cumulatedOfenBearbeitungOverTime, ["B-Motor Drehkranz im Uhrzeigersinn", "B-Motor Drehkranz gegen Uhrzeigersinn"], "B-Motor Drehkranz Bearbeitung");
     cumulatedOfenschieberOverTime = mergecumulatedValueOfen(cumulatedOfenSchieberOverTime, ["B-Motor Ofenschieber Einfahren", "B-Motor Ofenschieber Ausfahren"], "B-Motor Ofenschieber RausRein");
-    
+
     let bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, "H-horizontal", 78.6) // in cm// dict, name des sensors, teiler (1cm entspricht teiler), einheit
     bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "H-vertikal", 78.8) // in cm
     bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-vertikal", 78.2) // in cm
     bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-drehen", 2264) // in Anzahl Umdrehungen
     bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-horizontal", 67) // in Anzahl Umdrehungen
-    
+
     bereinigte_cumulatedValueOverTime = d3.merge([bereinigte_cumulatedValueOverTime, cumulatedOfenBearbeitungOverTime]);
     bereinigte_cumulatedValueOverTime = d3.merge([bereinigte_cumulatedValueOverTime, cumulatedOfenschieberOverTime]);
 
@@ -62,8 +65,8 @@ function preprocess_rawData(rawData, error) {
                 if (valueOfenRausRein.includes(key)) {
                     if (val == " true") {
                         countdictionary["B-Motor Ofenschieber RausRein"] = 5; //in CM
-                       
-                    } else if (val == " false"){
+
+                    } else if (val == " false") {
                         countdictionary["B-Motor Ofenschieber RausRein"] = 0;
                     }
                     countdictionary["B-Motor Ofenschieber Einfahren"] = -1; //verwendet um initialisierung der neuen variable raus rein anzuzeigen
@@ -71,7 +74,7 @@ function preprocess_rawData(rawData, error) {
                 } else if (valueOfenBearbeitung.includes(key)) {
                     if (val == " true") {
                         countdictionary["B-Motor Drehkranz Bearbeitung"] = 19.1; //in CM
-                    } else if (val == " false"){
+                    } else if (val == " false") {
                         countdictionary["B-Motor Drehkranz Bearbeitung"] = 0;
                     }
                     countdictionary["B-Motor Drehkranz im Uhrzeigersinn"] = -1;//verwendet um initialisierung der neuen variable raus rein anzuzeigen
@@ -97,11 +100,11 @@ function preprocess_rawData(rawData, error) {
                     }
                 } else if (valueOfenRausRein.includes(key)) {// Ofen raus rein
                     if (val == " true") {
-                        countdictionary["B-Motor Ofenschieber RausRein"] = Math.round((parseFloat(countdictionary["B-Motor Ofenschieber RausRein"]) + 5),1); //in CM
+                        countdictionary["B-Motor Ofenschieber RausRein"] = Math.round((parseFloat(countdictionary["B-Motor Ofenschieber RausRein"]) + 5), 1); //in CM
                     }
                 } else if (valueOfenBearbeitung.includes(key)) {// Ofen Bearbeitung
                     if (val == " true") {
-                        countdictionary["B-Motor Drehkranz Bearbeitung"] = Math.round((parseFloat(countdictionary["B-Motor Drehkranz Bearbeitung"]) + 19.1),1);// in CM
+                        countdictionary["B-Motor Drehkranz Bearbeitung"] = Math.round((parseFloat(countdictionary["B-Motor Drehkranz Bearbeitung"]) + 19.1), 1);// in CM
                     }
                 } else if (valueToCountOnTime.includes(key)) {
                     if (val == " true") {
@@ -135,7 +138,7 @@ function preprocess_rawData(rawData, error) {
     listeUmdrehungenVerteilstation = ["V-drehen"];
 
     listeOfenBearbeitungUndRausRein = ["B-Motor Drehkranz Bearbeitung", "B-Motor Ofenschieber RausRein"];
-   
+
     //Motorenlaufzeit
     listeToCountOnTimeBearbeitungsstation = ["B-Motor Saege", "B-Motor Sauger zum Ofen", "B-Motor Sauger zum Drehkranz", "B-Motor Foerderband vorwaerts"]; // Bearbeitungsstation motoren sowie fliessbaender
     listeToCountOnTimeSortierstation = ["S-Motor Foerderband"];
@@ -152,21 +155,21 @@ function preprocess_rawData(rawData, error) {
     let mapBearbeitungsstationFi = mapModule(listeBearbeitungsstationFi, liste);
     let mapSortierstationFi = mapModule(listeSortierstationFi, liste);
     let mapFesto = mapModule(listeFesto, liste);//Festo
-    
+
     //textuelleaenderungen  anzeigen
-    aktualisiereListe(mapHochregalFi, "hochregallager");
-    aktualisiereListe(mapVerteilstationFi, "verteilstation");
-    aktualisiereListe(mapBearbeitungsstationFi, "bearbeitungsstation");
-    aktualisiereListe(mapSortierstationFi, "sortierstation");
+    aktualisiereListe(mapHochregalFi, "hochregallager", undefined, true);
+    aktualisiereListe(mapVerteilstationFi, "verteilstation", undefined, true);
+    aktualisiereListe(mapBearbeitungsstationFi, "bearbeitungsstation", undefined, true);
+    aktualisiereListe(mapSortierstationFi, "sortierstation", undefined, true);
     //diagramme anzeigen
-    zeigeDiagram(mapHochregalFi, "hochregallagerG");
+    zeigeDiagram(mapHochregalFi, "hochregallagerG",);
     zeigeDiagram(mapVerteilstationFi, "verteilstationG");
     zeigeDiagram(mapBearbeitungsstationFi, "bearbeitungsstationG");
     zeigeDiagram(mapSortierstationFi, "sortierstationG");
-    
-    
-    let wegstreckenG = bereinigte_cumulatedValueOverTime.filter(function(x){
-        if (x.name == "V-drehen"){
+
+
+    let wegstreckenG = bereinigte_cumulatedValueOverTime.filter(function (x) {
+        if (x.name == "V-drehen") {
             return false;
         }
         return true;
@@ -174,18 +177,18 @@ function preprocess_rawData(rawData, error) {
 
     //console.log(wegstreckenG);
     zeigeLinePlot(wegstreckenG);
-    
 
-    
+
+
     //console.log(bereinigte_cumulatedValueOverTime)
     //kumulierte wegstrecken und umdrehungen teile die sensoren nach modulen auf
     let mapHochregalWegstrecken = mapModule(listeComulateHochregallager, bereinigte_cumulatedValueOverTime);
-    let mapVerteilstationWegstrecken = mapModule(listeComulateVerteilstation,bereinigte_cumulatedValueOverTime);
+    let mapVerteilstationWegstrecken = mapModule(listeComulateVerteilstation, bereinigte_cumulatedValueOverTime);
     let mapVerteilstationUmdrehungen = mapModule(listeUmdrehungenVerteilstation, bereinigte_cumulatedValueOverTime);
     let mapOfenBearbeitungUndRausReinWegstrecke = mapModule(listeOfenBearbeitungUndRausRein, bereinigte_cumulatedValueOverTime);
 
 
-    
+
 
 
 
@@ -196,14 +199,13 @@ function preprocess_rawData(rawData, error) {
     aktualisiereListeComulate(mapVerteilstationWegstrecken, "verteilstation_comulate", "cm")
     aktualisiereListeComulate(mapVerteilstationUmdrehungen, "verteilstation_umdrehungen_schwenkarm", "Umdrehungen")
     aktualisiereListeComulate(mapOfenBearbeitungUndRausReinWegstrecke, "bearbeitungsstation_cumulate", " cm")
-    console.log(mapOfenBearbeitungUndRausReinWegstrecke)
-    
+
     //motorenlaufzeit
     let mapBearbeitungsstationMotorenlaufzeit = mapModule(listeToCountOnTimeBearbeitungsstation, liste);
     let mapSortierstationMotorenlaufzeit = mapModule(listeToCountOnTimeSortierstation, liste);
 
-    aktualisiereListe(mapBearbeitungsstationMotorenlaufzeit, "bearbeitungsstation_motorenlaufzeit", " sek")
-    aktualisiereListe(mapSortierstationMotorenlaufzeit, "sortierstation_motorenlaufzeit", " sek")
+    aktualisiereListe(mapBearbeitungsstationMotorenlaufzeit, "bearbeitungsstation_motorenlaufzeit", " sek", undefined, false)
+    aktualisiereListe(mapSortierstationMotorenlaufzeit, "sortierstation_motorenlaufzeit", " sek", undefined, false)
 
     //Ampel
     let mapAmpelrot = mapModule(listeAmpelrot, liste);
@@ -219,7 +221,7 @@ function preprocess_rawData(rawData, error) {
 }
 
 
-function cumulatedValue(rawData, valueToLookAt){
+function cumulatedValue(rawData, valueToLookAt) {
     //cumulatedDistanceOverTime ist ein dictionary mit key: name des sensors val: wiederum dictionary mit datum: .... wert: kumulierte wegstrecke bis dahin
     let cumulatedValueOverTime = valueToLookAt.map(function (key) { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
         let currentValue = 0;// variable zum zwischenspeicher der bisherigen kumulierten wegstrecke für diesen key
@@ -235,14 +237,14 @@ function cumulatedValue(rawData, valueToLookAt){
 }
 
 //gleiche funktion nur für boolean
-function cumulatedValueBoolean(rawData, valueToLookAt, Aenderung){
+function cumulatedValueBoolean(rawData, valueToLookAt, Aenderung) {
     //cumulatedDistanceOverTime ist ein dictionary mit key: name des sensors val: wiederum dictionary mit datum: .... wert: kumulierte wegstrecke bis dahin
     let cumulatedValueOverTime = valueToLookAt.map(function (key) { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
         let currentValue = 0;// variable zum zwischenspeicher der bisherigen kumulierten wegstrecke für diesen key
         return {
             name: key,
             werte: rawData[0].map(function (data) {
-                if(data.werte[key] == " true"){
+                if (data.werte[key] == " true") {
                     currentValue = Math.round(currentValue + Aenderung, 1);
                 }
                 return { datum: data.datum, wert: currentValue };
@@ -252,10 +254,10 @@ function cumulatedValueBoolean(rawData, valueToLookAt, Aenderung){
     return cumulatedValueOverTime;
 }
 
-function mergecumulatedValueOfen(cumulatedOfenBearbeitungOverTime, valuesToMerge, finalkey){
+function mergecumulatedValueOfen(cumulatedOfenBearbeitungOverTime, valuesToMerge, finalkey) {
     let mergedcumulatedValueOverTime = [berechne()]
-    
-    function berechne () { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
+
+    function berechne() { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
         i = -1;
         return {
             name: finalkey,
@@ -270,23 +272,7 @@ function mergecumulatedValueOfen(cumulatedOfenBearbeitungOverTime, valuesToMerge
     return mergedcumulatedValueOverTime;
 }
 
-function aktualisiereListeComulate(listeModul, targetID, einheit) {
 
-    id = "#" + targetID;
-    //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
-    d3.select(id).selectAll("*").remove();
-    let d = d3.select(id).selectAll("li").data(listeModul);
-    //console.log(d)
-    //console.log(countTaster)
-    //.enter().append(): Daten hinzufuegen falls es mehr Daten als Elemente im HTML gibt.
-    //geschieht hier für jede Zeile von daten.
-    d.enter().append("li")
-        .text(function (listeModul) {
-            return listeModul.name + ": " + listeModul.werte[listeModul.werte.length - 1].wert + " " + einheit;
-        });
-    //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
-    d.exit().remove();
-}
 
 function bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, nameDesSensors, teiler) {
     let bereinigte_CumulatedValueOverTime = cumulatedValueOverTime.map(function (datarow) {
@@ -294,7 +280,7 @@ function bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, nameDe
             return {
                 name: datarow.name,
                 werte: datarow.werte.map(function (data) {
-                    return { datum: data.datum, wert: Math.round((parseInt(data.wert) / teiler),1) };// rundet auf 1 nachkommastelle den neuen wert genau
+                    return { datum: data.datum, wert: Math.round((parseInt(data.wert) / teiler), 1) };// rundet auf 1 nachkommastelle den neuen wert genau
                 })
             }
         } else {
@@ -306,17 +292,17 @@ function bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, nameDe
 
 function zeigeDiagram(liste, targetid) {
 
-    let farben = d3.scaleOrdinal(d3.schemeSet3); //andere Beispiele: schemePastel2, schemeSet1  
+    let farben = d3.scaleOrdinal(colorscheme); //andere Beispiele: schemePastel2, schemeSet1  
 
-   /*
-    liste = liste.filter(function(x){
-
-        if (x.val == 0){
-            return false;
-        }
-        return true;
-    });
-   */
+    /*
+     liste = liste.filter(function(x){
+ 
+         if (x.val == 0){
+             return false;
+         }
+         return true;
+     });
+    */
     id = "#" + targetid;
     d3.select(id).selectAll("*").remove();
 
@@ -348,29 +334,29 @@ function zeigeDiagram(liste, targetid) {
     y.domain([0, d3.max(liste, function (d) { return d.val; })]);
 
     // append the rectangles for the bar chart
-    var bars =  svg.selectAll(".bar").data(liste);
-   
-        bars.enter().append("rect")
+    var bars = svg.selectAll(".bar").data(liste);
+
+    bars.enter().append("rect")
         .attr("class", "bar")
         .attr("x", function (d) { return x(d.key); })
 
         .attr("width", 12)//x.bandwidth()
         .attr("y", function (d) { return y(d.val); })
         .attr("height", function (d) { return height - y(d.val); })
-            .style("fill", function (person, iteration) {
-                return farben(iteration);//ermittelt die Farbe
-            });
-        //.style("fill", "rgb(189, 189, 189)");
+        .style("fill", function (person, iteration) {
+            return farben(iteration);//ermittelt die Farbe
+        });
+    //.style("fill", "rgb(189, 189, 189)");
 
-        //TODO:
-        
+    //TODO:
+
 
 
 
 
     bars.exit().remove();
-    
-    
+
+
     //
     var balkenText = svg.selectAll(".balkentext").data(liste);
 
@@ -384,7 +370,7 @@ function zeigeDiagram(liste, targetid) {
         .attr("font-family", "sans-serif")
         .attr("font-size", "12px")
         .style("fill", "white")
-        
+
 
 
     balkenText.exit().remove();
@@ -412,9 +398,29 @@ function mapModule(listeModul, listeGlobal) {
     return filteredListe;
 }
 
-function aktualisiereListe(listeModul, targetID, einheit) {
+function aktualisiereListeComulate(listeModul, targetID, einheit) {
 
-    let farben = d3.scaleOrdinal(d3.schemeSet3); //andere Beispiele: schemePastel2, schemeSet1  
+    let farben = d3.scaleOrdinal(colorscheme); //andere Beispiele: schemePastel2, schemeSet1  
+
+    id = "#" + targetID;
+    //Rückgabe der d3.selectAll - Methode in variable p speichern.(Alle Kindelemente von content, die p- Elemente sind.) Am Anfang gibt es noch keine.
+    d3.select(id).selectAll("*").remove();
+    let d = d3.select(id).selectAll("li").data(listeModul);
+    //console.log(d)
+    //console.log(countTaster)
+    //.enter().append(): Daten hinzufuegen falls es mehr Daten als Elemente im HTML gibt.
+    //geschieht hier für jede Zeile von daten.
+    d.enter().append("li")
+        .text(function (listeModul) {
+            return listeModul.name + ": " + listeModul.werte[listeModul.werte.length - 1].wert + " " + einheit;
+        })
+    //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
+    d.exit().remove();
+}
+
+function aktualisiereListe(listeModul, targetID, einheit, pfeil) {
+
+    let farben = d3.scaleOrdinal(colorscheme); //andere Beispiele: schemePastel2, schemeSet1  
     
     id = "#" + targetID;
     d3.select(id).selectAll("*").remove();
@@ -424,16 +430,28 @@ function aktualisiereListe(listeModul, targetID, einheit) {
     //console.log(countTaster)
     //.enter().append(): Daten hinzufuegen falls es mehr Daten als Elemente im HTML gibt.
     //geschieht hier für jede Zeile von daten.
-    d.enter().append("li")
-        .text(function (listeModul) {
-            if(einheit == undefined){
-                return listeModul.key + ": "+listeModul.val + " ";
-            } else {
-                return listeModul.key + ": "+listeModul.val + einheit + " ";
-            }
-        }).append("text").text("<-").style("color", function (person, iteration) {
-            return farben(iteration);//ermittelt die Farbe
-        });
+    if (pfeil == true) {
+        d.enter().append("li")
+            .text(function (listeModul) {
+                if (einheit == undefined) {
+                    return listeModul.key + ": " + listeModul.val + " ";
+                } else {
+                    return listeModul.key + ": " + listeModul.val + einheit + " ";
+                }
+            }).append("text").text("<-").style("color", function (person, iteration) {
+                return farben(iteration);//ermittelt die Farbe
+            });
+    } else {
+        d.enter().append("li")
+            .text(function (listeModul) {
+                if (einheit == undefined) {
+                    return listeModul.key + ": " + listeModul.val + " ";
+                } else {
+                    return listeModul.key + ": " + listeModul.val + einheit + " ";
+                }
+            })
+    }
+
     //.exit().remove(): Daten löschen, falls es mehr Elemente im HTML als Daten gibt.
     d.exit().remove();
     //console.log(countTaster[0])
@@ -479,7 +497,7 @@ function zeigeLinePlot(sensorDaten) {
     svg = d3.select("#kummulierteWegStreckeG").append("svg")//Auf Webseite
         .attr("width", 400)
         .attr("height", 500)
-       
+
 
     //Statische Felder
     //svg = d3.select("svg");
@@ -491,7 +509,7 @@ function zeigeLinePlot(sensorDaten) {
     //Definition der Achstypen und Größe
     x = d3.scaleTime().range([0, width]);
     y = d3.scaleLinear().range([height, 0]);
-    farben = d3.scaleOrdinal(d3.schemeSet3); //andere Beispiele: schemePastel2, schemeSet1  
+    farben = d3.scaleOrdinal(colorscheme); //andere Beispiele: schemePastel2, schemeSet1  
 
     //Linienfunktion
     linienFunktion = d3.line()
