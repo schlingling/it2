@@ -32,27 +32,25 @@ function preprocess_rawData(rawData, error) {
     }
 
 
-    //cumulatedDistanceOverTime ist ein dictionary mit key: name des sensors val: wiederum dictionary mit datum: .... wert: kumulierte wegstrecke bis dahin
-    let cumulatedValueOverTime = valueToComulate.map(function (key) { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
-        let currentValue = 0;// variable zum zwischenspeicher der bisherigen kumulierten wegstrecke für diesen key
-        return {
-            name: key,
-            werte: rawData[0].map(function (data) {
-                currentValue += parseInt(data.werte[key]);
-                return { datum: data.datum, wert: currentValue };
-            })
-        }
-    });
+    let cumulatedValueOverTime = cumulatedValue(rawData, valueToComulate);
 
+    let cumulatedOfenBearbeitungOverTime = cumulatedValueBoolean(rawData, valueOfenBearbeitung, 19.1);
+    let cumulatedOfenSchieberOverTime = cumulatedValueBoolean(rawData, valueOfenRausRein, 5)
+    
+    cumulatedOfenBearbeitungOverTime = mergecumulatedValueOfen(cumulatedOfenBearbeitungOverTime, ["B-Motor Drehkranz im Uhrzeigersinn", "B-Motor Drehkranz gegen Uhrzeigersinn"], "B-Motor Drehkranz Bearbeitung");
+    cumulatedOfenschieberOverTime = mergecumulatedValueOfen(cumulatedOfenSchieberOverTime, ["B-Motor Ofenschieber Einfahren", "B-Motor Ofenschieber Ausfahren"], "B-Motor Ofenschieber RausRein");
+    
     let bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(cumulatedValueOverTime, "H-horizontal", 78.6) // in cm// dict, name des sensors, teiler (1cm entspricht teiler), einheit
     bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "H-vertikal", 78.8) // in cm
     bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-vertikal", 78.2) // in cm
     bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-drehen", 2264) // in Anzahl Umdrehungen
     bereinigte_cumulatedValueOverTime = bereinigeKumulierteWegstreckenachEinheit(bereinigte_cumulatedValueOverTime, "V-horizontal", 67) // in Anzahl Umdrehungen
-
+    
+    bereinigte_cumulatedValueOverTime = d3.merge([bereinigte_cumulatedValueOverTime, cumulatedOfenBearbeitungOverTime]);
+    bereinigte_cumulatedValueOverTime = d3.merge([bereinigte_cumulatedValueOverTime, cumulatedOfenschieberOverTime]);
 
     //console.log(cumulatedValueOverTime)
-    console.log(bereinigte_cumulatedValueOverTime);
+    //console.log(bereinigte_cumulatedValueOverTime);
 
 
     // addiere alle Anzahl der Statusänderungen sowie kumuliere alle wegstrecken um pro sensor ein 
@@ -174,7 +172,7 @@ function preprocess_rawData(rawData, error) {
         return true;
     })
 
-    console.log(wegstreckenG);
+    //console.log(wegstreckenG);
     zeigeLinePlot(wegstreckenG);
     
 
@@ -184,7 +182,7 @@ function preprocess_rawData(rawData, error) {
     let mapHochregalWegstrecken = mapModule(listeComulateHochregallager, bereinigte_cumulatedValueOverTime);
     let mapVerteilstationWegstrecken = mapModule(listeComulateVerteilstation,bereinigte_cumulatedValueOverTime);
     let mapVerteilstationUmdrehungen = mapModule(listeUmdrehungenVerteilstation, bereinigte_cumulatedValueOverTime);
-    let mapOfenBearbeitungUndRausReinWegstrecke = mapModule(listeOfenBearbeitungUndRausRein, liste);
+    let mapOfenBearbeitungUndRausReinWegstrecke = mapModule(listeOfenBearbeitungUndRausRein, bereinigte_cumulatedValueOverTime);
 
 
     
@@ -197,7 +195,8 @@ function preprocess_rawData(rawData, error) {
     aktualisiereListeComulate(mapHochregalWegstrecken, "hochregallager_comulate", "cm")
     aktualisiereListeComulate(mapVerteilstationWegstrecken, "verteilstation_comulate", "cm")
     aktualisiereListeComulate(mapVerteilstationUmdrehungen, "verteilstation_umdrehungen_schwenkarm", "Umdrehungen")
-    aktualisiereListe(mapOfenBearbeitungUndRausReinWegstrecke, "bearbeitungsstation_cumulate", " cm")
+    aktualisiereListeComulate(mapOfenBearbeitungUndRausReinWegstrecke, "bearbeitungsstation_cumulate", " cm")
+    console.log(mapOfenBearbeitungUndRausReinWegstrecke)
     
     //motorenlaufzeit
     let mapBearbeitungsstationMotorenlaufzeit = mapModule(listeToCountOnTimeBearbeitungsstation, liste);
@@ -217,6 +216,58 @@ function preprocess_rawData(rawData, error) {
     aktualisiereAmpel(mapAmpelorange, "lightyellow", gesamtAmpelZyklen);
     aktualisiereAmpel(mapAmpelgruen, "lightgreen", gesamtAmpelZyklen);
     aktualisiereAmpel(mapAmpelweiss, "lightwhite", gesamtAmpelZyklen);
+}
+
+
+function cumulatedValue(rawData, valueToLookAt){
+    //cumulatedDistanceOverTime ist ein dictionary mit key: name des sensors val: wiederum dictionary mit datum: .... wert: kumulierte wegstrecke bis dahin
+    let cumulatedValueOverTime = valueToLookAt.map(function (key) { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
+        let currentValue = 0;// variable zum zwischenspeicher der bisherigen kumulierten wegstrecke für diesen key
+        return {
+            name: key,
+            werte: rawData[0].map(function (data) {
+                currentValue += parseInt(data.werte[key]);
+                return { datum: data.datum, wert: currentValue };
+            })
+        }
+    });
+    return cumulatedValueOverTime;
+}
+
+//gleiche funktion nur für boolean
+function cumulatedValueBoolean(rawData, valueToLookAt, Aenderung){
+    //cumulatedDistanceOverTime ist ein dictionary mit key: name des sensors val: wiederum dictionary mit datum: .... wert: kumulierte wegstrecke bis dahin
+    let cumulatedValueOverTime = valueToLookAt.map(function (key) { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
+        let currentValue = 0;// variable zum zwischenspeicher der bisherigen kumulierten wegstrecke für diesen key
+        return {
+            name: key,
+            werte: rawData[0].map(function (data) {
+                if(data.werte[key] == " true"){
+                    currentValue = Math.round(currentValue + Aenderung, 1);
+                }
+                return { datum: data.datum, wert: currentValue };
+            })
+        }
+    });
+    return cumulatedValueOverTime;
+}
+
+function mergecumulatedValueOfen(cumulatedOfenBearbeitungOverTime, valuesToMerge, finalkey){
+    let mergedcumulatedValueOverTime = [berechne()]
+    
+    function berechne () { // fuer jeden sensor der zu kumulierende wegstrecken beinhaltet do
+        i = -1;
+        return {
+            name: finalkey,
+            werte: cumulatedOfenBearbeitungOverTime[0].werte.map(function (data) {
+                i++;
+                return { datum: data.datum, wert: data.wert + cumulatedOfenBearbeitungOverTime[1].werte[i].wert };
+            })
+        }
+    };
+
+    //mergedcumulatedValueOverTime
+    return mergedcumulatedValueOverTime;
 }
 
 function aktualisiereListeComulate(listeModul, targetID, einheit) {
@@ -395,7 +446,6 @@ function aktualisiereAmpel(listeModul, targetID, gesamtAmpelZyklen) {
 
 function zeigeLinePlot(sensorDaten) {
 
-    console.log(sensorDaten);
 
     let width;
     let heigh;
@@ -457,8 +507,8 @@ function zeigeLinePlot(sensorDaten) {
     });
 
 
-    console.log(minimum)
-    console.log(maximum)
+    //console.log(minimum)
+    //console.log(maximum)
     y.domain([minimum, maximum]);
 
 
