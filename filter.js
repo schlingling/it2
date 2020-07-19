@@ -48,6 +48,11 @@ function transformiereDaten(datenJson,datumFrom, datumTo) {
     let secsFrom =Date.parse(datumFrom);
     let secsTo =Date.parse(datumTo);
 
+    if (secsTo - secsFrom <= 0){
+        alert("Bitte wählen Sie einen sinnvollen Wert für die Filterung!")
+        return;
+    }
+
     datenJson = datenJson.filter(function(row){
         let datumString = row.datum
         let jahr= datumString.slice(6,10);

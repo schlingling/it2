@@ -27,6 +27,15 @@ h1 {
   color: white;
 }
 
+.navbar-brand {
+  font-weight: bold;
+}
+
+.active {
+  font-weight: bold;
+  color: #fdc220 !important;
+}
+
 .container {
   margin: 20px 15px 20px 15px;
 }

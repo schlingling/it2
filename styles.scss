@@ -1,9 +1,11 @@
-$company-color: rgb(255, 0, 0);
+$company-color: rgb(253, 194, 32);;
 
 body {
     background-color: #717e87;
     font-family: Roboto;
 }
+
+
 
 .page{
     justify-content: center;
@@ -20,10 +22,18 @@ h1 {
     background-color: #314151;
     .navlinkc{
         color: white;
+        
     }
 }
 
+.navbar-brand{
+    font-weight: bold;
+}
 
+.active{
+    font-weight: bold;
+    color: $company-color !important;
+}
 
 .container{
     margin: 20px 15px 20px 15px;
@@ -43,7 +53,7 @@ h1 {
 
 h2 {
     
-    color: rgb(253, 194, 32);
+    color: $company-color;
 }
 
 h3 {
